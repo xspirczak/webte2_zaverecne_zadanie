@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navigácia -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">PDF Správca</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Úvod</a>
+            </li>
+            <li class="nav-item" id="pdfEditorLink" style="display: none;">
+                <a class="nav-link" href="pdf.html">PDF Editor</a>
+            </li>
+            <li class="nav-item" id="historyLink" style="display: none;">
+                <a class="nav-link" href="history.html">História</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav" id="auth-links">
+            <li class="nav-item" id="loginLink">
+                <a class="nav-link" href="login.html">Prihlásenie</a>
+            </li>
+            <li class="nav-item" id="registerLink">
+                <a class="nav-link" href="register.html">Registrácia</a>
+            </li>
+            <li class="nav-item d-flex align-items-center ml-3" id="userInfo" style="display: none;">
+    <span class="nav-link mb-0" id="usernameDisplay" style="font-weight: bold;">
+        Prihlásený: <span id="usernameText"></span>
+    </span>
+                <a href="#" id="logoutBtn" class="nav-link" title="Odhlásiť sa">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+<!-- Obsah stránky -->
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="mb-4">Vitaj, <span id="welcomeUsername"></span>!</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-file-pdf"></i> Správa PDF</h5>
+                        <p class="card-text">Nahrávaj, spájaj, rozdeľuj a spravuj svoje PDF súbory jednoducho.</p>
+                        <a href="pdf.html" class="btn btn-primary">Prejsť na Správu PDF</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4" id="historyCard" style="display: none;">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-history"></i> História akcií</h5>
+                        <p class="card-text">Prezri si históriu správy PDF súborov, ak máš administrátorské oprávnenia.</p>
+                        <a href="history.html" class="btn btn-secondary">Prejsť na Históriu</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS + jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Dashboard skript -->
+<script src="assets/js/auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Správca - Úvod</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/yourfontawesomekey.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.html">PDF Správca</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Úvod</a>
+            </li>
+            <li class="nav-item" id="pdfEditorLink" style="display: none;">
+                <a class="nav-link" href="pdf.html">PDF Editor</a>
+            </li>
+            <li class="nav-item" id="historyLink" style="display: none;">
+                <a class="nav-link" href="history.html">História</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav" id="auth-links">
+            <li class="nav-item" id="loginLink">
+                <a class="nav-link" href="login.html">Prihlásenie</a>
+            </li>
+            <li class="nav-item" id="registerLink">
+                <a class="nav-link" href="register.html">Registrácia</a>
+            </li>
+            <li class="nav-item d-flex align-items-center ml-3" id="userInfo" style="display: none;">
+    <span class="nav-link mb-0" id="usernameDisplay" style="font-weight: bold;">
+        Prihlásený: <span id="usernameText"></span>
+    </span>
+                <a href="#" id="logoutBtn" class="nav-link" title="Odhlásiť sa">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<!-- Úvodná sekcia -->
+<div class="container text-center mt-5">
+    <h1 class="display-4">Vitaj v PDF Správcovi</h1>
+    <p class="lead mt-3">Spravuj svoje PDF dokumenty jednoducho a bezpečne.</p>
+    <div class="mt-4">
+        <a href="login.html" class="btn btn-primary btn-lg mr-2">Prihlásiť sa</a>
+        <a href="register.html" class="btn btn-success btn-lg ml-2">Registrácia</a>
+    </div>
+</div>
+
+<!-- Bootstrap a vlastný script -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/auth.js"></script>
+
+</body>
+</html>
