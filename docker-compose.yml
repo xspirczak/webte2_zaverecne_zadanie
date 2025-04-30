@@ -6,7 +6,7 @@ services:
       MYSQL_DATABASE: zaverecne_zadanie
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3307:3306"
+      - "3308:3306"
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
