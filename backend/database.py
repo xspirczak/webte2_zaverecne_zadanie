@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from databases import Database
 from sqlalchemy import create_engine
-from backend.models import metadata
+from models import metadata
 
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")

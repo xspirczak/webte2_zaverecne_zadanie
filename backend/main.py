@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.database import database
-from backend.routers import user_routes, history_routes, pdf_routes
+from database import database
+from routers import user_routes, history_routes, pdf_routes
 
 app = FastAPI()
 
-# CORS middleware musí byť hneď po vytvorení app
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # alebo ["http://localhost:63342"], ak chceš byť presný
+    allow_origins=["*"],  # alebo ["http://localhost:63342"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

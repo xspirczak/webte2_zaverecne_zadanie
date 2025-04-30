@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.auth import create_access_token, get_password_hash, verify_password
-from backend.database import database
-from backend.models import users_table
+from auth import create_access_token, get_password_hash, verify_password
+from database import database
+from models import users_table
 from pydantic import BaseModel
 from datetime import datetime
+
 
 router = APIRouter()
 

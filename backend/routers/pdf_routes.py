@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
-from backend.auth import get_current_user
-from backend.models import history_table
+from auth import get_current_user
+from models import history_table
 from sqlalchemy import insert
-from backend.database import database
+from database import database
+
 
 router = APIRouter()
 

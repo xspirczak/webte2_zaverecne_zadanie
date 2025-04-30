@@ -1,7 +1,7 @@
 aiomysql==0.2.0
 annotated-types==0.7.0
 anyio==4.9.0
-bcrypt==4.3.0
+bcrypt==3.2.2
 certifi==2025.4.26
 cffi==1.17.1
 click==8.1.8
@@ -32,3 +32,4 @@ starlette==0.46.2
 typing-inspection==0.4.0
 typing_extensions==4.13.2
 uvicorn==0.34.2
+passlib[bcrypt]==1.7.4
