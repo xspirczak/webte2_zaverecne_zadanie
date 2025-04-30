@@ -4,7 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import database
 from routers import user_routes, history_routes, pdf_routes
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    root_path="/api"
+)
 
 # CORS middleware
 app.add_middleware(
