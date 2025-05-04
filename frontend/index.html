@@ -6,20 +6,26 @@
     <title>PDF Správca - Úvod</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.html">PDF Správca</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
+    <a class="navbar-brand" href="index.html">PDF Editor</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav mx-auto">
             <li class="nav-item" id="pdfEditorLink" style="display: none;">
-                <a class="nav-link" href="pdf.html">PDF Editor</a>
+                <a class="nav-link" href="pdf.html">Editor</a>
+            </li>
+            <li class="nav-item" id="manualLink" style="display: none;">
+                <a class="nav-link" href="manual.html">Používateľská príručka</a>
+            </li>
+            <li class="nav-item" id="apiDocsLink" style="display: none;">
+                <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
             </li>
             <li class="nav-item" id="historyLink" style="display: none;">
                 <a class="nav-link" href="history.html">História</a>
@@ -45,19 +51,73 @@
     </div>
 </nav>
 
-
-
 <!-- Úvodná sekcia -->
-<div class="container text-center mt-5">
-    <h1 class="display-4">Vitaj v PDF Správcovi</h1>
-    <p class="lead mt-3">Spravuj svoje PDF dokumenty jednoducho a bezpečne.</p>
+<div class="container intro-section mt-5">
+    <h1 class="mb-3">Vitajte v PDF Editore</h1>
+    <p class="lead">Jednoduchá, bezpečná a moderná správa tvojich PDF dokumentov.</p>
     <div class="mt-4">
-        <a href="login.html" class="btn btn-primary btn-lg mr-2">Prihlásiť sa</a>
-        <a href="register.html" class="btn btn-success btn-lg ml-2">Registrácia</a>
+        <a href="login.html" class="btn btn-primary btn-lg mr-3">
+            <i class="fas fa-sign-in-alt mr-1"></i> Prihlásiť sa
+        </a>
+        <a href="register.html" class="btn btn-success btn-lg ml-3">
+            <i class="fas fa-user-plus mr-1"></i> Registrácia
+        </a>
     </div>
 </div>
 
-<!-- Bootstrap a vlastný script -->
+<!-- Sekcia s výhodami -->
+<section class="features-section text-center mt-5">
+    <div class="container">
+        <h2 class="mb-4">Prečo používať PDF Správcu?</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <i class="fas fa-file-pdf feature-icon mb-2"></i>
+                <h5>Rýchla úprava PDF</h5>
+                <p>Rozdeľ, zluč, extrahuj alebo premenovávaj PDF súbory jednoducho.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <i class="fas fa-lock feature-icon mb-2"></i>
+                <h5>Bezpečnosť na prvom mieste</h5>
+                <p>Všetky súbory sú spracované bezpečne – bez úniku údajov.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <i class="fas fa-user-shield feature-icon mb-2"></i>
+                <h5>Prístup podľa roly</h5>
+                <p>Administrátori a používatelia majú prístup presne podľa svojich právomocí.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="text-white mt-5 py-4 custom-color">
+    <div class="container text-center">
+        <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+        <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Oliver Dávid Spirczak</p>
+        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+    </div>
+</footer>
+
+<!-- AccessToken Modal -->
+<div class="modal fade" id="tokenExpiredModal" tabindex="-1" role="dialog" aria-labelledby="tokenExpiredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="tokenExpiredLabel">Prístupový token vypršal</h5>
+            </div>
+            <div class="modal-body">
+                <div id="tokenMessage" class="mt-3 text-center font-weight-bold"></div>
+                Váš prístupový kľúč vypršal. Kliknutím nižšie si môžete obnoviť prístup.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="refreshModalBtn">
+                    <i class="fas fa-sync-alt mr-1"></i> Obnoviť token
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/auth.js" defer></script>

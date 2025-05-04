@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <title>Používateľská príručka</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap a FontAwesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body>
+
+<!-- Navigácia -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
+  <a class="navbar-brand" href="index.html">PDF Editor</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+    <ul class="navbar-nav mx-auto">
+      <li class="nav-item" id="pdfEditorLink" style="display: none;">
+        <a class="nav-link" href="pdf.html">Editor</a>
+      </li>
+      <li class="nav-item" id="manualLink" style="display: none;">
+        <a class="nav-link" href="manual.html">Používateľská príručka</a>
+      </li>
+      <li class="nav-item" id="apiDocsLink" style="display: none;">
+        <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
+      </li>
+      <li class="nav-item" id="historyLink" style="display: none;">
+        <a class="nav-link" href="history.html">História</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav" id="auth-links">
+      <li class="nav-item" id="loginLink">
+        <a class="nav-link" href="login.html">Prihlásenie</a>
+      </li>
+      <li class="nav-item" id="registerLink">
+        <a class="nav-link" href="register.html">Registrácia</a>
+      </li>
+      <li class="nav-item d-flex align-items-center ml-3" id="userInfo" style="display: none;">
+                <span class="nav-link mb-0" id="usernameDisplay" style="font-weight: bold;">
+                    Prihlásený: <span id="usernameText"></span>
+                </span>
+        <a href="#" id="logoutBtn" class="nav-link" title="Odhlásiť sa">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Obsah príručky - spraviť to potom dynamicky generovaný -->
+<div class="container manual-section my-5 bg-white p-4 rounded shadow">
+  <h1 class="mb-4 text-center">Používateľská príručka</h1>
+
+  <h3>1. Úvod</h3>
+  <p>Táto príručka slúži ako kompletný návod na používanie aplikácie PDF Správca. Obsahuje popis všetkých funkcionalít dostupných cez používateľské rozhranie (frontend) a rozhranie API (backend).</p>
+
+  <h3>2. Funkcionalita aplikácie</h3>
+  <ul>
+    <li>Prihlásenie a registrácia používateľov</li>
+    <li>Editor PDF súborov (zlučovanie, rozdeľovanie, premenovávanie)</li>
+    <li>História vykonaných akcií</li>
+    <li>Úloha a rola používateľa (štandardný / administrátor)</li>
+    <li>Export používateľskej príručky do PDF</li>
+  </ul>
+
+  <h3>3. Použitie cez frontend</h3>
+  <p>Používateľ sa najprv zaregistruje a následne prihlási. V dashboarde sa mu zobrazia dostupné funkcie podľa roly. Pomocou grafického rozhrania môže:</p>
+  <ul>
+    <li>Vybrať súbory na úpravu</li>
+    <li>Zlúčiť viac PDF do jedného</li>
+    <li>Rozdeliť PDF súbor na časti</li>
+    <li>Stiahnuť upravený výstup</li>
+  </ul>
+
+  <h3>4. Použitie cez API</h3>
+  <p>Backend poskytuje OpenAPI dokumentáciu dostupnú na <a href="http://localhost:8000/docs" target="_blank">/docs</a>. Príklady volania API:</p>
+  <pre><code>POST /api/user/login
+GET /api/pdf/list
+POST /api/pdf/merge
+POST /api/pdf/split</code></pre>
+
+  <h3>5. Export príručky</h3>
+  <p>Obsah tejto príručky je generovaný dynamicky. Pri kliknutí na tlačidlo nižšie sa odošle požiadavka na server, ktorý vygeneruje aktuálnu verziu tejto príručky vo formáte PDF.</p>
+</div>
+
+<!-- Export tlačidlo -->
+<button class="btn btn-outline-primary export-btn" onclick="exportManual()">
+  <i class="fas fa-file-pdf mr-1"></i> Exportovať do PDF
+</button>
+
+<footer class="text-white mt-5 py-4 custom-color">
+  <div class="container text-center">
+    <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+    <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Oliver Dávid Spirczak</p>
+    <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+  </div>
+</footer>
+
+<!-- AccessToken Modal -->
+<div class="modal fade" id="tokenExpiredModal" tabindex="-1" role="dialog" aria-labelledby="tokenExpiredLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="tokenExpiredLabel">Prístupový token vypršal</h5>
+      </div>
+      <div class="modal-body">
+        <div id="tokenMessage" class="mt-3 text-center font-weight-bold"></div>
+        Váš prístupový kľúč vypršal. Kliknutím nižšie si môžete obnoviť prístup.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" id="refreshModalBtn">
+          <i class="fas fa-sync-alt mr-1"></i> Obnoviť token
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/manual.js"></script>
+
+
+
+</body>
+</html>

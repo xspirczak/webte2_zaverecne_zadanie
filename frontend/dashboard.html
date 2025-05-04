@@ -10,19 +10,71 @@
 
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f9ff, #e8f5e9);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-section {
+            flex: 1;
+            padding: 60px 20px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .dashboard-section h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .dashboard-section p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .card-link {
+            transition: transform 0.3s ease;
+            border: none;
+        }
+
+        .card-link:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            background-color: #2c3e50 !important;
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.html">PDF Správca</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
+    <a class="navbar-brand" href="index.html">PDF Editor</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav mx-auto">
             <li class="nav-item" id="pdfEditorLink" style="display: none;">
-                <a class="nav-link" href="pdf.html">PDF Editor</a>
+                <a class="nav-link" href="pdf.html">Editor</a>
+            </li>
+            <li class="nav-item" id="manualLink" style="display: none;">
+                <a class="nav-link" href="manual.html">Používateľská príručka</a>
+            </li>
+            <li class="nav-item" id="apiDocsLink" style="display: none;">
+                <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
             </li>
             <li class="nav-item" id="historyLink" style="display: none;">
                 <a class="nav-link" href="history.html">História</a>
@@ -51,32 +103,78 @@
 
 
 
-<!-- Obsah stránky -->
-<div class="container mt-5">
-    <div class="text-center">
-        <h1 class="mb-4">Vitaj, <span id="welcomeUsername"></span>!</h1>
 
-        <div class="row justify-content-center">
-            <div class="col-md-4 mb-4">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-file-pdf"></i> Správa PDF</h5>
-                        <p class="card-text">Nahrávaj, spájaj, rozdeľuj a spravuj svoje PDF súbory jednoducho.</p>
-                        <a href="pdf.html" class="btn btn-primary">Prejsť na Správu PDF</a>
-                    </div>
-                </div>
+<div class="dashboard-section container">
+    <h2 class="mb-3" id="welcomeHeading">Vitaj späť v PDF Editore</h2>
+    <p class="mb-5">Čo chceš dnes spraviť?</p>
+
+    <div class="row" id="dashboardCards">
+
+        <!-- PDF Editor -->
+        <div class="col-md-4 mb-4">
+            <a href="pdf.html" class="card card-link shadow-sm text-center p-4">
+                <i class="fas fa-file-pdf fa-3x mb-3 text-danger"></i>
+                <h5>PDF Editor</h5>
+                <p class="text-muted">Zluč, rozdeľ alebo uprav PDF dokumenty.</p>
+            </a>
+        </div>
+
+        <!-- Používateľská príručka -->
+        <div class="col-md-4 mb-4">
+            <a href="manual.html" class="card card-link shadow-sm text-center p-4">
+                <i class="fas fa-book-open fa-3x mb-3 text-success"></i>
+                <h5>Používateľská príručka</h5>
+                <p class="text-muted">Návod na používanie aplikácie cez UI aj API.</p>
+            </a>
+        </div>
+
+        <!-- API Dokumentácia -->
+        <div class="col-md-4 mb-4">
+            <a href="http://localhost:8000/docs" target="_blank" class="card card-link shadow-sm text-center p-4">
+                <i class="fas fa-code fa-3x mb-3 text-primary"></i>
+                <h5>API Dokumentácia</h5>
+                <p class="text-muted">OpenAPI dokumentácia backendu aplikácie.</p>
+            </a>
+        </div>
+
+        <!-- História – len pre admina -->
+        <div class="col-md-4 mb-4 d-none" id="historyCard">
+            <a href="history.html" class="card card-link shadow-sm text-center p-4">
+                <i class="fas fa-history fa-3x mb-3 text-warning"></i>
+                <h5>História</h5>
+                <p class="text-muted">Zobraz si aktivitu používateľov v aplikácii.</p>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+<footer class="text-white mt-5 py-4 custom-color">
+    <div class="container text-center">
+        <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+        <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Oliver Dávid Spirczak</p>
+        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+    </div>
+</footer>
+
+
+<!-- AccessToken Modal -->
+<div class="modal fade" id="tokenExpiredModal" tabindex="-1" role="dialog" aria-labelledby="tokenExpiredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="tokenExpiredLabel">Prístupový token vypršal</h5>
             </div>
-
-            <div class="col-md-4 mb-4" id="historyCard" style="display: none;">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-history"></i> História akcií</h5>
-                        <p class="card-text">Prezri si históriu správy PDF súborov, ak máš administrátorské oprávnenia.</p>
-                        <a href="history.html" class="btn btn-secondary">Prejsť na Históriu</a>
-                    </div>
-                </div>
+            <div class="modal-body">
+                <div id="tokenMessage" class="mt-3 text-center font-weight-bold"></div>
+                Váš prístupový kľúč vypršal. Kliknutím nižšie si môžete obnoviť prístup.
             </div>
-
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="refreshModalBtn">
+                    <i class="fas fa-sync-alt mr-1"></i> Obnoviť token
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -87,6 +185,22 @@
 
 <!-- Dashboard skript -->
 <script src="assets/js/auth.js"></script>
+
+<script>
+    const username = localStorage.getItem('username');
+    const role = localStorage.getItem('role');
+
+    if (username) {
+        document.getElementById('usernameText').textContent = username;
+        document.getElementById('welcomeHeading').textContent = `Vitaj späť, ${username}, v PDF Editore!`;
+    }
+
+    if (role === "admin") {
+        document.getElementById('historyCard').classList.remove("d-none");
+    }
+
+
+</script>
 
 </body>
 </html>

@@ -4,7 +4,9 @@ from database import database
 from models import users_table
 from pydantic import BaseModel
 from datetime import datetime
-
+from auth import get_current_user
+import re
+from fastapi import status
 
 router = APIRouter()
 
@@ -17,26 +19,53 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# Endpoint na registráciu
+
+# Regex na základnú validáciu emailu
+EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+
 @router.post("/register")
 async def register(user: UserRegister):
+    # Overenie mena
+    if not user.username or len(user.username.strip()) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Používateľské meno musí mať aspoň 3 znaky."
+        )
+
+    # Overenie emailu
+    if not re.match(EMAIL_REGEX, user.email.strip()):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Neplatný formát emailovej adresy."
+        )
+
+    # Overenie hesla
+    if not user.password or len(user.password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Heslo musí mať aspoň 6 znakov."
+        )
+
+    # Overenie duplicity emailu
     query = users_table.select().where(users_table.c.email == user.email)
     existing_user = await database.fetch_one(query)
     if existing_user:
         raise HTTPException(status_code=400, detail="Používateľ s týmto emailom už existuje")
 
+    # Uloženie do DB
     hashed_password = get_password_hash(user.password)
 
     insert_query = users_table.insert().values(
-        username=user.username,
-        email=user.email,
-        hashed_password=hashed_password,  # <-- tu upravené!
-        role="user",  # predvolená rola používateľa
+        username=user.username.strip(),
+        email=user.email.strip(),
+        hashed_password=hashed_password,
+        role="user",
         created_at=datetime.utcnow()
     )
 
     await database.execute(insert_query)
     return {"message": "Registrácia úspešná"}
+
 
 # Endpoint na login
 @router.post("/login")
@@ -59,4 +88,18 @@ async def login(user: UserLogin):
         "token_type": "bearer",
         "username": db_user["username"],
         "role": db_user["role"]
+    }
+
+
+# Endpoint na obnovenie tokenu
+@router.post("/refresh-token")
+async def refresh_token(user=Depends(get_current_user)):
+    new_token = create_access_token({
+        "sub": user["email"],
+        "role": user["role"]
+    })
+
+    return {
+        "access_token": new_token,
+        "token_type": "bearer"
     }

@@ -1,1 +1,1 @@
-const BACKEND_URL = "http://localhost";
+const BACKEND_URL = "http://localhost:8000/api";

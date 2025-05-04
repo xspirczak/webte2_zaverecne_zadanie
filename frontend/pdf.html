@@ -1,22 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>PDF Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f9ff, #e8f5e9);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.html">PDF Správca</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
+    <a class="navbar-brand" href="index.html">PDF Editor</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <ul class="navbar-nav">
+        <ul class="navbar-nav mx-auto">
             <li class="nav-item" id="pdfEditorLink" style="display: none;">
-                <a class="nav-link" href="pdf.html">PDF Editor</a>
+                <a class="nav-link" href="pdf.html">Editor</a>
+            </li>
+            <li class="nav-item" id="manualLink" style="display: none;">
+                <a class="nav-link" href="manual.html">Používateľská príručka</a>
+            </li>
+            <li class="nav-item" id="apiDocsLink" style="display: none;">
+                <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
             </li>
             <li class="nav-item" id="historyLink" style="display: none;">
                 <a class="nav-link" href="history.html">História</a>
@@ -42,6 +61,117 @@
     </div>
 </nav>
 
+<div class="container editor-container">
+    <h2 class="text-center mb-5">Vyber funkciu pre prácu s PDF</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-4">
+
+        <!-- Funkcie -->
+        <div class="col mb-4">
+            <a href="split.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-cut tool-icon text-danger"></i>
+                <h5>Rozdeliť PDF</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="merge.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-layer-group tool-icon text-success"></i>
+                <h5>Zlúčiť PDF</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="rotate.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-sync-alt tool-icon text-info"></i>
+                <h5>Otočiť stránky</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="compress.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-compress tool-icon text-warning"></i>
+                <h5>Komprimovať PDF</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="extract.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-file-export tool-icon text-primary"></i>
+                <h5>Extrahovať stránky</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="delete.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-trash-alt tool-icon text-danger"></i>
+                <h5>Vymazať stránky</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="reorder.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-sort tool-icon text-secondary"></i>
+                <h5>Zmeniť poradie</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="watermark.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-tint tool-icon text-info"></i>
+                <h5>Pridať vodoznak</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="password.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-lock tool-icon text-dark"></i>
+                <h5>Chrániť heslom</h5>
+            </a>
+        </div>
+
+        <div class="col mb-4">
+            <a href="convert.html" class="card text-center p-4 tool-card">
+                <i class="fas fa-file-alt tool-icon text-success"></i>
+                <h5>Konvertovať do textu</h5>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer class="text-white mt-5 py-4 custom-color">
+    <div class="container text-center">
+        <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+        <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Oliver Dávid Spirczak</p>
+        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+    </div>
+</footer>
+
+
+<!-- AccessToken Modal -->
+<div class="modal fade" id="tokenExpiredModal" tabindex="-1" role="dialog" aria-labelledby="tokenExpiredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="tokenExpiredLabel">Prístupový token vypršal</h5>
+            </div>
+            <div class="modal-body">
+                <div id="tokenMessage" class="mt-3 text-center font-weight-bold"></div>
+                Váš prístupový kľúč vypršal. Kliknutím nižšie si môžete obnoviť prístup.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="refreshModalBtn">
+                    <i class="fas fa-sync-alt mr-1"></i> Obnoviť token
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="assets/js/auth.js"></script>
+
+
+
 </body>
 </html>
