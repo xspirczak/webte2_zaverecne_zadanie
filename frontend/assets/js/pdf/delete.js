@@ -135,7 +135,7 @@ deleteBtn.addEventListener("click", async () => {
     spinner.style.display = "block";
 
     try {
-        const response = await fetch(`${BACKEND_URL}/pdf/delete-pages`, {
+        const response = await fetch(`${BACKEND_URL}/pdf/delete-pages?access_type=frontend`, {
             method: "POST",
             body: formData,
             headers: {

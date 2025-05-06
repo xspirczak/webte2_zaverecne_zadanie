@@ -156,7 +156,7 @@ submitBtn.addEventListener("click", async () => {
     try {
         const accessToken = localStorage.getItem("access_token");
 
-        const res = await fetch(`${BACKEND_URL}/pdf/rotate`, {
+        const res = await fetch(`${BACKEND_URL}/pdf/rotate?access_type=frontend`, {
             method: "POST",
             body: formData,
             headers: {

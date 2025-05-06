@@ -138,7 +138,7 @@ splitBtn.addEventListener("click", async () => {
     spinner.style.display = "block";
 
     try {
-        const response = await fetch(`${BACKEND_URL}/pdf/split`, {
+        const response = await fetch(`${BACKEND_URL}/pdf/split?access_type=frontend`, {
             method: "POST",
             body: formData,
             headers: {
