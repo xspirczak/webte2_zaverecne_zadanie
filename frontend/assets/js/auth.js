@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualLink = document.getElementById('manualLink');
     const apiDocsLink = document.getElementById('apiDocsLink');
     const logoutBtn = document.getElementById('logoutBtn');
+    const dashboardLink = document.getElementById('dashboardLink');
 
     if (username) {
 
@@ -24,12 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pdfEditorLink) pdfEditorLink.style.display = 'block';
         if (manualLink) manualLink.style.display = 'block';
         if (apiDocsLink) apiDocsLink.style.display = 'block';
+        if (dashboardLink) dashboardLink.style.display = 'block';
         if (role === 'admin' && historyLink) historyLink.style.display = 'block';
     } else {
-        console.log("Používateľ NIE je prihlásený – skrývam userInfo a ďalšie časti");
 
         if (userInfo) userInfo.remove();
         if (pdfEditorLink) pdfEditorLink.style.display = 'none';
+        if (dashboardLink) dashboardLink.style.display = 'none';
         if (manualLink) manualLink.style.display = 'none';
         if (apiDocsLink) apiDocsLink.style.display = 'none';
         if (historyLink) historyLink.style.display = 'none';
@@ -43,6 +45,33 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.clear();
             window.location.href = 'index.html';
         });
+    }
+
+
+    //Prístupy na podstránky podľa roly
+    const token = localStorage.getItem("access_token");
+    const currentPage = window.location.pathname.split("/").pop();
+
+    const protectedPages = ["dashboard.html", "pdf.html", "manual.html"];
+    const authPages = ["login.html", "register.html"];
+
+    // Používateľ NIE je prihlásený – zablokuj prístup na chránené stránky
+    if (!token && protectedPages.includes(currentPage)) {
+        window.location.href = "login.html";
+    }
+
+    // Používateľ JE prihlásený – zablokuj prístup na login a register
+    if (token && authPages.includes(currentPage)) {
+        window.location.href = "index.html";
+    }
+
+    // Ak je bežný používateľ na history.html → prístup zamietnutý
+    if (currentPage === "history.html") {
+        if (!token) {
+            window.location.href = "login.html";
+        } else if (role !== "admin") {
+            window.location.href = "access_denied.html";
+        }
     }
 
 

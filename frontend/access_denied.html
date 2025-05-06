@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/css/style.css">
 
 </head>
-<body>
+<body class="d-flex">
 
 <!-- Navigácia -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
@@ -58,48 +58,12 @@
   </div>
 </nav>
 
-<!-- Obsah príručky - spraviť to potom dynamicky generovaný -->
-<div class="container manual-section my-5 bg-white p-4 rounded shadow">
-  <h1 class="mb-4 text-center">Používateľská príručka</h1>
-
-  <h3>1. Úvod</h3>
-  <p>Táto príručka slúži ako kompletný návod na používanie aplikácie PDF Správca. Obsahuje popis všetkých funkcionalít dostupných cez používateľské rozhranie (frontend) a rozhranie API (backend).</p>
-
-  <h3>2. Funkcionalita aplikácie</h3>
-  <ul>
-    <li>Prihlásenie a registrácia používateľov</li>
-    <li>Editor PDF súborov (zlučovanie, rozdeľovanie, premenovávanie)</li>
-    <li>História vykonaných akcií</li>
-    <li>Úloha a rola používateľa (štandardný / administrátor)</li>
-    <li>Export používateľskej príručky do PDF</li>
-  </ul>
-
-  <h3>3. Použitie cez frontend</h3>
-  <p>Používateľ sa najprv zaregistruje a následne prihlási. V dashboarde sa mu zobrazia dostupné funkcie podľa roly. Pomocou grafického rozhrania môže:</p>
-  <ul>
-    <li>Vybrať súbory na úpravu</li>
-    <li>Zlúčiť viac PDF do jedného</li>
-    <li>Rozdeliť PDF súbor na časti</li>
-    <li>Stiahnuť upravený výstup</li>
-  </ul>
-
-  <h3>4. Použitie cez API</h3>
-  <p>Backend poskytuje OpenAPI dokumentáciu dostupnú na <a href="http://localhost:8000/docs" target="_blank">/docs</a>. Príklady volania API:</p>
-  <pre><code>POST /api/user/login
-GET /api/pdf/list
-POST /api/pdf/merge
-POST /api/pdf/split</code></pre>
-
-  <h3>5. Export príručky</h3>
-  <p>Obsah tejto príručky je generovaný dynamicky. Pri kliknutí na tlačidlo nižšie sa odošle požiadavka na server, ktorý vygeneruje aktuálnu verziu tejto príručky vo formáte PDF.</p>
+<div class="container mt-5 text-center">
+  <h1 class="text-danger">Prístup zamietnutý</h1>
+  <p>Táto stránka je dostupná iba pre administrátorov.</p>
 </div>
 
-<!-- Export tlačidlo -->
-<button class="btn btn-outline-primary export-btn" onclick="exportManual()">
-  <i class="fas fa-file-pdf mr-1"></i> Exportovať do PDF
-</button>
-
-<footer class="text-white mt-5 py-4 custom-color">
+<footer class="text-white mt-auto py-4 custom-color">
   <div class="container text-center">
     <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
     <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Dávid Oliver Spirczak</p>
@@ -128,7 +92,7 @@ POST /api/pdf/split</code></pre>
 </div>
 
 <script src="assets/js/auth.js"></script>
-<script src="assets/js/manual.js"></script>
+<script src="assets/js/env.js"></script>
 
 
 
