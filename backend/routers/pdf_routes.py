@@ -192,3 +192,200 @@ async def delete_pages(request: Request, file: UploadFile, pagesToDelete: str = 
     return StreamingResponse(output, media_type="application/pdf", headers={
         "Content-Disposition": "attachment; filename=deleted-pages.pdf"
     })
+
+
+
+# Endpoint na pridanie vodoznaku do PDF
+@router.post("/watermark")
+async def add_watermark(
+    request: Request,
+    file: UploadFile = File(...),
+    watermarkType: str = Form(...),
+    opacity: str = Form(...),
+    position: str = Form(...),
+    watermarkText: str = Form(None),
+    textColor: str = Form(None),
+    fontSize: str = Form(None),
+    watermarkImage: UploadFile = File(None),
+    user=Depends(get_current_user),
+    access_type: Optional[str] = Query(default="api")
+):
+    if user["role"] != "user" and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
+    try:
+        # Import potrebných knižníc
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.colors import Color, HexColor
+        from PIL import Image
+
+        # Načítanie PDF súboru
+        pdf_content = await file.read()
+        reader = PdfReader(io.BytesIO(pdf_content))
+        writer = PdfWriter()
+
+        # Spracovanie opacity
+        try:
+            opacity_value = int(opacity) / 100
+        except ValueError:
+            opacity_value = 0.3  # Default hodnota
+
+        # Príprava vodoznaku
+        if watermarkType == "text" and watermarkText:
+            # Textový vodoznak
+            
+            # Pre každú stranu PDF získame jej veľkosť
+            for i, page in enumerate(reader.pages):
+                # Vytvorenie dočasného canvas pre vodoznak pre túto stranu
+                watermark_stream = io.BytesIO()
+                
+                # Získať dimensions strany
+                page_box = page.mediabox
+                page_width = float(page_box.width)
+                page_height = float(page_box.height)
+                
+                c = canvas.Canvas(watermark_stream, pagesize=(page_width, page_height))
+                
+                # Nastavenie farby textu
+                if textColor:
+                    c.setFillColor(HexColor(f"#{textColor}"))
+                else:
+                    c.setFillColor(Color(0.5, 0.5, 0.5, alpha=opacity_value))  # Grey with opacity
+                
+                # Nastavenie veľkosti písma - prispôsobíme veľkosti strany
+                base_font_size = min(page_width, page_height) / 20  # Dynamický výpočet
+                font_size = base_font_size  # Default
+                
+                if fontSize == "small":
+                    font_size = base_font_size * 0.75
+                elif fontSize == "large":
+                    font_size = base_font_size * 1.5
+                
+                c.setFont("Helvetica", font_size)
+                
+                # Určenie pozície pre text
+                x, y = page_width/2, page_height/2  # Default center
+                
+                margin = min(page_width, page_height) / 10  # Dynamický margin
+                
+                if position == "topLeft":
+                    x, y = margin, page_height - margin
+                elif position == "topRight":
+                    x, y = page_width - margin, page_height - margin
+                elif position == "bottomLeft":
+                    x, y = margin, margin
+                elif position == "bottomRight":
+                    x, y = page_width - margin, margin
+                
+                # Nastavenie opacity a pridanie textu
+                c.setFillAlpha(opacity_value)
+                if position in ["topLeft", "bottomLeft"]:
+                    c.drawString(x, y, watermarkText)
+                elif position in ["topRight", "bottomRight"]:
+                    text_width = c.stringWidth(watermarkText, "Helvetica", font_size)
+                    c.drawString(x - text_width, y, watermarkText)
+                else:
+                    c.drawCentredString(x, y, watermarkText)
+                
+                c.save()
+                
+                # Vytvorenie PdfReader z vodoznaku
+                watermark_stream.seek(0)
+                watermark_reader = PdfReader(watermark_stream)
+                watermark_page = watermark_reader.pages[0]
+                
+                # Merge a add to writer
+                page.merge_page(watermark_page)
+                writer.add_page(page)
+                
+        elif watermarkType == "image" and watermarkImage:
+            # Obrázkový vodoznak
+            
+            # Načítanie obrázka
+            image_content = await watermarkImage.read()
+            image = Image.open(io.BytesIO(image_content))
+            
+            # Uložíme obrázok do dočasného súboru
+            temp_img = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+            image.save(temp_img.name)
+            temp_img_path = temp_img.name
+            
+            try:
+                # Pre každú stranu PDF
+                for i, page in enumerate(reader.pages):
+                    # Získať dimensions strany
+                    page_box = page.mediabox
+                    page_width = float(page_box.width)
+                    page_height = float(page_box.height)
+                    
+                    # Vytvorenie dočasného canvas pre vodoznak
+                    watermark_stream = io.BytesIO()
+                    c = canvas.Canvas(watermark_stream, pagesize=(page_width, page_height))
+                    
+                    # Určenie pozície pre obrázok
+                    img_width, img_height = image.size
+                    
+                    # Výpočet mierky, aby obrázok nebol príliš veľký (max 1/3 strany)
+                    scale = min(page_width/3 / img_width, page_height/3 / img_height)
+                    scaled_width = img_width * scale
+                    scaled_height = img_height * scale
+                    
+                    # Určenie pozície
+                    margin = min(page_width, page_height) / 20  # Dynamický margin
+                    
+                    x, y = (page_width - scaled_width)/2, (page_height - scaled_height)/2  # Default center
+                    
+                    if position == "topLeft":
+                        x, y = margin, page_height - margin - scaled_height
+                    elif position == "topRight":
+                        x, y = page_width - margin - scaled_width, page_height - margin - scaled_height
+                    elif position == "bottomLeft":
+                        x, y = margin, margin
+                    elif position == "bottomRight":
+                        x, y = page_width - margin - scaled_width, margin
+                    
+                    # Pridanie obrázka do canvas s opacity
+                    c.setFillAlpha(opacity_value)
+                    c.drawImage(temp_img_path, x, y, width=scaled_width, height=scaled_height, mask='auto')
+                    c.save()
+                    
+                    # Vytvorenie PdfReader z vodoznaku
+                    watermark_stream.seek(0)
+                    watermark_reader = PdfReader(watermark_stream)
+                    watermark_page = watermark_reader.pages[0]
+                    
+                    # Merge a add to writer
+                    page.merge_page(watermark_page)
+                    writer.add_page(page)
+            finally:
+                # Odstránenie dočasného súboru až po dokončení všetkých operácií
+                if os.path.exists(temp_img_path):
+                    os.unlink(temp_img_path)
+        else:
+            # Chýbajúce údaje
+            raise HTTPException(status_code=400, detail="Missing watermark data")
+
+        # Zaznamenávanie akcie do histórie
+        await log_history(
+            user_email=user["email"],
+            action="add-watermark",
+            access_type=access_type,
+            client_ip=request.client.host
+        )
+
+        # Vrátenie výsledného PDF
+        output = io.BytesIO()
+        writer.write(output)
+        output.seek(0)
+
+        return StreamingResponse(
+            output,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=watermarked_{file.filename}"}
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
