@@ -1,0 +1,41 @@
+.drop-zone {
+    border: 2px dashed #007bff;
+    border-radius: 5px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.drop-zone:hover {
+    background-color: #f8f9fa;
+}
+
+.preview-container {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.preview-container canvas {
+    margin: 0 auto;
+    max-height: 300px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.custom-file-label::after {
+    content: "Prehľadávať";
+}
+
+.watermark-option {
+    margin-bottom: 15px;
+}
+
+/* Pre mobilné zobrazenie */
+@media (max-width: 768px) {
+    .preview-container canvas {
+        max-height: 200px;
+    }
+}
