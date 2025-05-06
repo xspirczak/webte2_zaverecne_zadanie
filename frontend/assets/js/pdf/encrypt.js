@@ -15,9 +15,14 @@ document.getElementById("encryptBtn").onclick = async () => {
     formData.append("file", file);
     formData.append("password", password);
 
+    const accessToken = localStorage.getItem("access_token");
+
     const response = await fetch(`${BACKEND_URL}/pdf/encrypt`, {
         method: "POST",
-        body: formData
+        body: formData,
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        }
     });
 
     if (response.ok) {

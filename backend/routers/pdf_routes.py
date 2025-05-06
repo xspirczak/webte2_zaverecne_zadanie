@@ -9,12 +9,18 @@ import tempfile
 import os
 import uuid
 import io, json
+import zipfile
+from typing import List
+
 
 router = APIRouter()
 
 # Endpoint na zlucovanie pdf suborov
 @router.post("/merge")
-async def merge_pdfs(files: list[UploadFile] = File(...)):
+async def merge_pdfs(files: list[UploadFile] = File(...), user=Depends(get_current_user)):
+    if user["role"] != "user" and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
     merger = PdfWriter()
     temp_files = []
 
@@ -37,7 +43,10 @@ async def merge_pdfs(files: list[UploadFile] = File(...)):
 
 # Endpoint na rotovanie stran v PDF
 @router.post("/rotate")
-async def rotate_pdf(file: UploadFile, rotations: str = Form(...)):
+async def rotate_pdf(file: UploadFile, rotations: str = Form(...), user=Depends(get_current_user)):
+    if user["role"] != "user" and user["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
     file_bytes = await file.read()
     file_stream = io.BytesIO(file_bytes)
     reader = PdfReader(file_stream)
@@ -58,7 +67,10 @@ async def rotate_pdf(file: UploadFile, rotations: str = Form(...)):
 
 # Endpoint na zaheslovanie PDF
 @router.post("/encrypt")
-async def encrypt_pdf(file: UploadFile, password: str = Form(...)):
+async def encrypt_pdf(file: UploadFile, password: str = Form(...), user=Depends(get_current_user)):
+    if user["role"] != "user" and user["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
     contents = await file.read()
     reader = PdfReader(io.BytesIO(contents))
     writer = PdfWriter()
@@ -77,3 +89,39 @@ async def encrypt_pdf(file: UploadFile, password: str = Form(...)):
         media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=secured.pdf"}
     )
+
+@router.post("/split")
+async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depends(get_current_user)):
+    if user["role"] != "user" and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
+    selected = json.loads(selectedPages)
+    file_bytes = await file.read()
+    reader = PdfReader(io.BytesIO(file_bytes))
+
+    writer1 = PdfWriter()
+    writer2 = PdfWriter()
+
+    for i, page in enumerate(reader.pages):
+        if i in selected:
+            writer1.add_page(page)
+        else:
+            writer2.add_page(page)
+
+    pdf1 = io.BytesIO()
+    pdf2 = io.BytesIO()
+    writer1.write(pdf1)
+    writer2.write(pdf2)
+    pdf1.seek(0)
+    pdf2.seek(0)
+
+    # Vytvor ZIP s oboma PDF
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+        zip_file.writestr("part1.pdf", pdf1.read())
+        zip_file.writestr("part2.pdf", pdf2.read())
+    zip_buffer.seek(0)
+
+    return StreamingResponse(zip_buffer, media_type="application/zip", headers={
+        "Content-Disposition": "attachment; filename=split.zip"
+    })

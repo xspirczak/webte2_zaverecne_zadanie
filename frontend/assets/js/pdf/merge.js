@@ -115,13 +115,17 @@ document.getElementById("mergeForm").addEventListener("submit", async e => {
         return;
     }
 
+    const accessToken = localStorage.getItem("access_token");
     const formData = new FormData();
     fileList.forEach(file => formData.append("files", file));
 
     try {
         const response = await fetch(`${BACKEND_URL}/pdf/merge`, {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
         });
 
         if (response.ok) {
