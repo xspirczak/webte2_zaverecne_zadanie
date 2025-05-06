@@ -2,18 +2,146 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>Otočiť PDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor - Rotácia strán</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pdf_utils/rotate.css">
 </head>
-<link rel="stylesheet" href="../assets/css/pdf_utils/rotate.css">
-<body>
-<h2>Otočiť PDF strany</h2>
-<input type="file" id="pdfFile" accept="application/pdf">
-<div id="preview"></div>
-<button id="submitBtn" style="display: none;">Odoslať PDF</button>
-<a id="downloadBtn" style="display: none;">Stiahnuť otočené PDF</a>
+<body class="d-flex">
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-color py-4">
+    <a class="navbar-brand" href="../index.html">PDF Editor</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item" id="dashboardLink" style="display: none;">
+                <a class="nav-link" href="../dashboard.html">Úvod</a>
+            </li>
+            <li class="nav-item" id="pdfEditorLink" style="display: none;">
+                <a class="nav-link" href="../pdf.html">Editor</a>
+            </li>
+            <li class="nav-item" id="manualLink" style="display: none;">
+                <a class="nav-link" href="../manual.html">Používateľská príručka</a>
+            </li>
+            <li class="nav-item" id="apiDocsLink" style="display: none;">
+                <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
+            </li>
+            <li class="nav-item" id="historyLink" style="display: none;">
+                <a class="nav-link" href="../history.html">História</a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav" id="auth-links">
+            <li class="nav-item" id="loginLink">
+                <a class="nav-link" href="../login.html">Prihlásenie</a>
+            </li>
+            <li class="nav-item" id="registerLink">
+                <a class="nav-link" href="../register.html">Registrácia</a>
+            </li>
+            <li class="nav-item d-flex align-items-center ml-3" id="userInfo" style="display: none;">
+                <span class="nav-link mb-0" id="usernameDisplay" style="font-weight: bold;">
+                    Prihlásený: <span id="usernameText"></span>
+                </span>
+                <a href="#" id="logoutBtn" class="nav-link" title="Odhlásiť sa">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Rotácia strán PDF</h2>
+
+    <form id="rotateForm">
+        <div id="dropZone" class="drop-zone mb-3">
+            <p><i class="fas fa-cloud-upload-alt fa-2x mb-2"></i></p>
+            <p>Presuň sem PDF alebo klikni pre výber</p>
+            <input type="file" id="pdfFile" accept="application/pdf" hidden>
+        </div>
+
+        <div class="text-center mb-2 font-weight-bold" id="fileNameDisplay"></div>
+
+        <div id="previewList" class="preview-list"></div>
+
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-warning mr-2" id="resetBtn" style="display: none;">
+                <i class="fas fa-times-circle"></i> Zrušiť výber
+            </button>
+            <button type="button" class="btn btn-primary" id="submitBtn" style="display: none;">
+                <i class="fas fa-redo-alt"></i> Otočiť PDF
+            </button>
+        </div>
+
+        <!-- Spinner -->
+        <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Načítava sa...</span>
+            </div>
+            <p class="mt-2">Spracovávanie súboru...</p>
+        </div>
+
+        <!-- Správa -->
+        <div class="text-center mt-3 mb-3">
+            <div id="rotateMessage" class="font-weight-bold text-center"></div>
+        </div>
+
+        <!-- Tlačidlo na stiahnutie -->
+        <div class="text-center mt-3 mb-5">
+            <a id="downloadBtn" class="btn btn-success" style="display: none;">
+                <i class="fas fa-download"></i> Stiahnuť otočený PDF
+            </a>
+        </div>
+
+    </form>
+</div>
+
+
+
+<footer class="text-white mt-auto py-4 custom-color">
+    <div class="container text-center">
+        <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+        <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Dávid Oliver Spirczak</p>
+        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+    </div>
+</footer>
+
+
+<!-- AccessToken Modal -->
+<div class="modal fade" id="tokenExpiredModal" tabindex="-1" role="dialog" aria-labelledby="tokenExpiredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="tokenExpiredLabel">Prístupový token vypršal</h5>
+            </div>
+            <div class="modal-body">
+                <div id="tokenMessage" class="mt-3 text-center font-weight-bold"></div>
+                Váš prístupový kľúč vypršal. Kliknutím nižšie si môžete obnoviť prístup.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="refreshModalBtn">
+                    <i class="fas fa-sync-alt mr-1"></i> Obnoviť token
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script src="../assets/js/env.js"></script>
 <script src="../assets/js/pdf/rotate.js"></script>
+<script src="../assets/js/auth.js"></script>
+
 </body>
 </html>

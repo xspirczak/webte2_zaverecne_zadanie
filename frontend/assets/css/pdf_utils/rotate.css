@@ -23,3 +23,62 @@ button {
     flex-direction: column;
     align-items: center;
 }
+
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    color: #666;
+    cursor: pointer;
+}
+.drop-zone.dragover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+.preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+.page-container {
+    text-align: center;
+    width: 180px;
+}
+.page-container canvas {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.rotate-buttons {
+    margin-top: 5px;
+}
+.rotate-buttons button {
+    margin: 0 5px;
+}
+.preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-item {
+    width: 220px;
+    text-align: center;
+}
+
+.preview-item canvas {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.preview-item span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
