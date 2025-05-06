@@ -3,33 +3,32 @@ from auth import get_current_user
 from models import history_table
 from sqlalchemy import insert
 from database import database
-
+from fastapi.responses import FileResponse
+from pypdf import PdfWriter
+import tempfile
+import os
+import uuid
 
 router = APIRouter()
 
-@router.get("/pdf/test")
-async def pdf_test(user: dict = Depends(get_current_user)):
-    return {"message": f"PDF funkcia funguje pre používateľa {user['email']}"}
+@router.post("/merge")
+async def merge_pdfs(files: list[UploadFile] = File(...)):
+    merger = PdfWriter()
+    temp_files = []
 
-# Tu budeme postupne pridávať všetky PDF funkcionality (spájanie, vymazanie strany, atď.)
+    try:
+        for file in files:
+            temp = tempfile.NamedTemporaryFile(delete=False)
+            temp.write(await file.read())
+            temp.close()
+            merger.append(temp.name)
+            temp_files.append(temp.name)
 
-# Príklad - nahranie PDF (predpríprava na reálnu funkcionalitu)
-@router.post("/pdf/upload")
-async def upload_pdf(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
-    if not file.filename.endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Iba PDF súbory sú podporované.")
+        output_path = f"/tmp/merged_{uuid.uuid4().hex}.pdf"
+        merger.write(output_path)
+        merger.close()
 
-    # Tu by sme reálne spracovali PDF pomocou pypdf (zatiaľ len simulujeme)
-    content = await file.read()
-
-    # Uloženie do histórie použitia
-    query = insert(history_table).values(
-        user_id=user["id"],
-        action="upload_pdf",
-        description=f"Nahraný súbor: {file.filename}",
-        frontend=True,
-        location="unknown"  # neskôr cez API si vieme zistiť lokalitu
-    )
-    await database.execute(query)
-
-    return {"filename": file.filename, "message": "PDF prijaté"}
+        return FileResponse(output_path, media_type="application/pdf", filename="merged.pdf")
+    finally:
+        for path in temp_files:
+            os.remove(path)
