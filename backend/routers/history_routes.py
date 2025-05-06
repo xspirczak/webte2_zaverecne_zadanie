@@ -21,6 +21,8 @@ async def get_history(user=Depends(get_current_user)):
     return await database.fetch_all(query)
 
 # GET /api/history/export
+from starlette.responses import StreamingResponse  # odporúčané cez starlette
+
 @router.get("/export")
 async def export_history(user=Depends(get_current_user)):
     if user["role"] != "admin":
@@ -28,6 +30,7 @@ async def export_history(user=Depends(get_current_user)):
 
     rows = await database.fetch_all(select(history_table).order_by(history_table.c.timestamp.desc()))
 
+    # Priprav CSV ako text s BOM pre UTF-8
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow(["Používateľ", "Akcia", "Dátum a čas", "Prístup", "Mesto", "Štát"])
@@ -42,10 +45,16 @@ async def export_history(user=Depends(get_current_user)):
             r["country"]
         ])
 
-    output.seek(0)
-    return StreamingResponse(output, media_type="text/csv", headers={
+    # Zakóduj ako utf-8-sig a vráť ako bajty
+    encoded = output.getvalue().encode("utf-8-sig")
+    buffer = io.BytesIO(encoded)
+
+    return StreamingResponse(buffer, media_type="text/csv", headers={
         "Content-Disposition": "attachment; filename=history.csv"
     })
+
+
+
 
 # DELETE /api/history
 @router.delete("/")

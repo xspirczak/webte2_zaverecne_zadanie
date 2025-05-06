@@ -1,11 +1,18 @@
-const BACKEND_URL = "http://localhost:8000/api";
+function showAlert(message, type = "info") {
+    const alertDiv = document.getElementById("historyAlert");
+    alertDiv.textContent = message;
+    alertDiv.className = `alert alert-${type} text-center`;
+    alertDiv.style.display = "block";
+    setTimeout(() => {
+        alertDiv.style.display = "none";
+    }, 4000);
+}
 
 $(document).ready(function () {
     const accessToken = localStorage.getItem("access_token");
 
-    // Ak token nie je, presmeruj
     if (!accessToken) {
-        alert("Nie ste prihlásený.");
+        showAlert("Nie ste prihlásený.", "warning");
         window.location.href = "login.html";
         return;
     }
@@ -19,7 +26,7 @@ $(document).ready(function () {
             })
                 .then(response => {
                     if (response.status === 401 || response.status === 403) {
-                        alert("Neoprávnený prístup. Prihláste sa znova.");
+                        showAlert("Neoprávnený prístup. Prihláste sa znova.", "danger");
                         window.location.href = "login.html";
                         throw new Error("Neoprávnený prístup");
                     }
@@ -30,6 +37,7 @@ $(document).ready(function () {
                 })
                 .catch(err => {
                     console.error("Chyba pri načítaní histórie:", err);
+                    showAlert("Chyba pri načítaní histórie.", "danger");
                     callback({ data: [] });
                 });
         },
@@ -51,7 +59,7 @@ $(document).ready(function () {
         })
             .then(response => {
                 if (response.status === 401 || response.status === 403) {
-                    alert("Neoprávnený prístup.");
+                    showAlert("Neoprávnený prístup.", "danger");
                     window.location.href = "login.html";
                     return;
                 }
@@ -67,31 +75,38 @@ $(document).ready(function () {
                 a.click();
                 a.remove();
                 window.URL.revokeObjectURL(url);
+                showAlert("Export prebehol úspešne.", "success");
             })
-            .catch(err => alert("Chyba pri exporte: " + err.message));
+            .catch(err => showAlert("Chyba pri exporte: " + err.message, "danger"));
     });
 
+    // Otvorenie modalu pre potvrdenie vymazania
     $('#clearHistoryBtn').on('click', () => {
-        if (confirm("Naozaj chcete vymazať všetku históriu?")) {
-            fetch(`${BACKEND_URL}/history`, {
-                method: 'DELETE',
-                headers: {
-                    "Authorization": "Bearer " + accessToken
+        $('#confirmDeleteModal').modal('show');
+    });
+
+    // Potvrdenie vymazania v modali
+    $('#confirmDeleteBtn').on('click', () => {
+        $('#confirmDeleteModal').modal('hide');
+
+        fetch(`${BACKEND_URL}/history`, {
+            method: 'DELETE',
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    showAlert("Neoprávnený prístup.", "danger");
+                    window.location.href = "login.html";
+                    return;
                 }
+                return response.json();
             })
-                .then(response => {
-                    if (response.status === 401 || response.status === 403) {
-                        alert("Neoprávnený prístup.");
-                        window.location.href = "login.html";
-                        return;
-                    }
-                    return response.json();
-                })
-                .then(() => {
-                    table.ajax.reload();
-                    alert("História bola úspešne vymazaná.");
-                })
-                .catch(err => alert("Chyba pri mazaní histórie: " + err.message));
-        }
+            .then(() => {
+                table.ajax.reload();
+                showAlert("História bola úspešne vymazaná.", "success");
+            })
+            .catch(err => showAlert("Chyba pri mazaní histórie: " + err.message, "danger"));
     });
 });
