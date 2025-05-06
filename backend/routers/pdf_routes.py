@@ -12,7 +12,6 @@ import io, json
 import zipfile
 from typing import List
 
-
 router = APIRouter()
 
 # Endpoint na zlucovanie pdf suborov
@@ -90,6 +89,7 @@ async def encrypt_pdf(file: UploadFile, password: str = Form(...), user=Depends(
         headers={"Content-Disposition": "attachment; filename=secured.pdf"}
     )
 
+# Endpoint na rozdelenie PDF suboru na dve casti
 @router.post("/split")
 async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depends(get_current_user)):
     if user["role"] != "user" and user["role"] != "admin":
@@ -115,7 +115,6 @@ async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depen
     pdf1.seek(0)
     pdf2.seek(0)
 
-    # Vytvor ZIP s oboma PDF
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w") as zip_file:
         zip_file.writestr("part1.pdf", pdf1.read())
@@ -124,4 +123,27 @@ async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depen
 
     return StreamingResponse(zip_buffer, media_type="application/zip", headers={
         "Content-Disposition": "attachment; filename=split.zip"
+    })
+
+# Endpoint na odstranie vybranych stran z PDF
+@router.post("/delete-pages")
+async def delete_pages(file: UploadFile, pagesToDelete: str = Form(...), user=Depends(get_current_user)):
+    if user["role"] != "user" and user["role"] != "admin":
+            raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
+    delete_indexes = json.loads(pagesToDelete)
+    file_bytes = await file.read()
+    reader = PdfReader(io.BytesIO(file_bytes))
+    writer = PdfWriter()
+
+    for i, page in enumerate(reader.pages):
+        if i not in delete_indexes:
+            writer.add_page(page)
+
+    output = io.BytesIO()
+    writer.write(output)
+    output.seek(0)
+
+    return StreamingResponse(output, media_type="application/pdf", headers={
+        "Content-Disposition": "attachment; filename=deleted-pages.pdf"
     })
