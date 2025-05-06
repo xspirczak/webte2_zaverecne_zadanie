@@ -193,8 +193,6 @@ async def delete_pages(request: Request, file: UploadFile, pagesToDelete: str = 
         "Content-Disposition": "attachment; filename=deleted-pages.pdf"
     })
 
-
-
 # Endpoint na pridanie vodoznaku do PDF
 @router.post("/watermark")
 async def add_watermark(
