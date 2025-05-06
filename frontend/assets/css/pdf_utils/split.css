@@ -1,0 +1,66 @@
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    color: #666;
+    cursor: pointer;
+}
+.drop-zone.dragover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-item {
+    width: 220px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.preview-item:hover {
+    transform: scale(1.03);
+}
+
+.preview-item canvas {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border 0.3s;
+}
+
+.preview-item.selected canvas {
+    border: 3px solid #007bff;
+}
+
+.preview-item span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+#splitMessage {
+    font-weight: bold;
+}
+
+button,
+a.btn {
+    margin: 5px;
+}
+
+.instructions {
+    font-size: 0.95rem;
+    color: #555;
+    background-color: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
