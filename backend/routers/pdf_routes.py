@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, UploadFile, Query, File, Form, Request
 from auth import get_current_user
 from models import history_table
 from sqlalchemy import insert
@@ -11,12 +11,23 @@ import uuid
 import io, json
 import zipfile
 from typing import List
+from history import log_history
+from typing import Optional
 
 router = APIRouter()
 
+# Testovanie requestu mimo frontendu (aby sa dosiahol zaznam api) sa da robit pomocou curl
+# curl -X POST "http://localhost:8000/api/pdf/rotate" \
+#    -H "Authorization: Bearer <ACCESS_TOKEN>" \
+#    -F "file=@<cest_k_suboru_pdf>" \
+#    -F "rotations=[<uhol_otocenia/i>]"
+
+# Pri vyvoji a testovani na localhoste/dockeri sa zapisuje
+# do historie lokacia "neznama" pretoze request ide z privatnej ip adresy
+
 # Endpoint na zlucovanie pdf suborov
 @router.post("/merge")
-async def merge_pdfs(files: list[UploadFile] = File(...), user=Depends(get_current_user)):
+async def merge_pdfs(request: Request, files: list[UploadFile] = File(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
@@ -35,6 +46,13 @@ async def merge_pdfs(files: list[UploadFile] = File(...), user=Depends(get_curre
         merger.write(output_path)
         merger.close()
 
+        await log_history(
+            user_email=user["email"],
+            action="merge",
+            access_type=access_type,
+            client_ip=request.client.host
+        )
+
         return FileResponse(output_path, media_type="application/pdf", filename="merged.pdf")
     finally:
         for path in temp_files:
@@ -42,7 +60,7 @@ async def merge_pdfs(files: list[UploadFile] = File(...), user=Depends(get_curre
 
 # Endpoint na rotovanie stran v PDF
 @router.post("/rotate")
-async def rotate_pdf(file: UploadFile, rotations: str = Form(...), user=Depends(get_current_user)):
+async def rotate_pdf(request: Request, file: UploadFile, rotations: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
             raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
@@ -60,13 +78,20 @@ async def rotate_pdf(file: UploadFile, rotations: str = Form(...), user=Depends(
     writer.write(output)
     output.seek(0)
 
+    await log_history(
+        user_email=user["email"],
+        action="rotate",
+        access_type=access_type,
+        client_ip=request.client.host
+    )
+
     return StreamingResponse(output, media_type="application/pdf", headers={
         "Content-Disposition": "attachment; filename=rotated.pdf"
     })
 
 # Endpoint na zaheslovanie PDF
 @router.post("/encrypt")
-async def encrypt_pdf(file: UploadFile, password: str = Form(...), user=Depends(get_current_user)):
+async def encrypt_pdf(request: Request, file: UploadFile, password: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
             raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
@@ -83,6 +108,13 @@ async def encrypt_pdf(file: UploadFile, password: str = Form(...), user=Depends(
     writer.write(output_stream)
     output_stream.seek(0)
 
+    await log_history(
+        user_email=user["email"],
+        action="encrypt",
+        access_type=access_type,
+        client_ip=request.client.host
+    )
+
     return StreamingResponse(
         output_stream,
         media_type="application/pdf",
@@ -91,7 +123,7 @@ async def encrypt_pdf(file: UploadFile, password: str = Form(...), user=Depends(
 
 # Endpoint na rozdelenie PDF suboru na dve casti
 @router.post("/split")
-async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depends(get_current_user)):
+async def split_pdf(request: Request, file: UploadFile, selectedPages: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
@@ -121,13 +153,19 @@ async def split_pdf(file: UploadFile, selectedPages: str = Form(...), user=Depen
         zip_file.writestr("part2.pdf", pdf2.read())
     zip_buffer.seek(0)
 
+    await log_history(
+        user_email=user["email"],
+        action="split",
+        access_type=access_type,
+        client_ip=request.client.host
+    )
     return StreamingResponse(zip_buffer, media_type="application/zip", headers={
         "Content-Disposition": "attachment; filename=split.zip"
     })
 
 # Endpoint na odstranie vybranych stran z PDF
 @router.post("/delete-pages")
-async def delete_pages(file: UploadFile, pagesToDelete: str = Form(...), user=Depends(get_current_user)):
+async def delete_pages(request: Request, file: UploadFile, pagesToDelete: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
             raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
@@ -143,6 +181,13 @@ async def delete_pages(file: UploadFile, pagesToDelete: str = Form(...), user=De
     output = io.BytesIO()
     writer.write(output)
     output.seek(0)
+
+    await log_history(
+        user_email=user["email"],
+        action="delete-pages",
+        access_type=access_type,
+        client_ip=request.client.host
+    )
 
     return StreamingResponse(output, media_type="application/pdf", headers={
         "Content-Disposition": "attachment; filename=deleted-pages.pdf"

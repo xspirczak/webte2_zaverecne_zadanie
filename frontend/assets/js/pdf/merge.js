@@ -120,7 +120,7 @@ document.getElementById("mergeForm").addEventListener("submit", async e => {
     fileList.forEach(file => formData.append("files", file));
 
     try {
-        const response = await fetch(`${BACKEND_URL}/pdf/merge`, {
+        const response = await fetch(`${BACKEND_URL}/pdf/merge?access_type=frontend`, {
             method: "POST",
             body: formData,
             headers: {

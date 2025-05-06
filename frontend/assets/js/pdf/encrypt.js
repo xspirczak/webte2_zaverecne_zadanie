@@ -100,7 +100,7 @@ document.getElementById("encryptForm").addEventListener("submit", async (e) => {
     spinner.style.display = "block";
 
     try {
-        const response = await fetch(`${BACKEND_URL}/pdf/encrypt`, {
+        const response = await fetch(`${BACKEND_URL}/pdf/encrypt?access_type=frontend`, {
             method: "POST",
             body: formData,
             headers: {
