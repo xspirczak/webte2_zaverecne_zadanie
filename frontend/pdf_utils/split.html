@@ -78,8 +78,15 @@
         <!-- Náhľady -->
         <div id="pdfPreview" class="preview-list mb-4"></div>
 
+
         <!-- Tlačidlo Rozdeliť -->
-        <div class="text-center mt-4">
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-warning mr-2" id="resetSelectionBtn" style="display: none;">
+                <i class="fas fa-times-circle"></i> Zrušiť výber
+            </button>
+            <button type="button" class="btn btn-danger" id="removeFileBtn" style="display: none;">
+                <i class="fas fa-trash-alt"></i> Odstrániť PDF
+            </button>
             <button type="button" class="btn btn-primary" id="splitBtn" disabled>
                 <i class="fas fa-code-branch"></i> Rozdeliť PDF
             </button>

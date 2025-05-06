@@ -1,0 +1,44 @@
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    color: #666;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.drop-zone.dragover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-item {
+    width: 220px;
+    text-align: center;
+}
+
+.preview-item canvas {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: opacity 0.3s, border-color 0.3s;
+}
+
+.preview-item span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.preview-item.selected canvas {
+    border: 2px solid #007bff;
+    opacity: 0.4;
+}

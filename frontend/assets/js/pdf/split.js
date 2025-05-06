@@ -4,11 +4,15 @@ const previewList = document.getElementById("pdfPreview");
 const splitBtn = document.getElementById("splitBtn");
 const message = document.getElementById("splitMessage");
 const downloadArea = document.getElementById("downloadArea");
+const resetSelectionBtn = document.getElementById("resetSelectionBtn");
+const removeFileBtn = document.getElementById("removeFileBtn");
+const spinner = document.getElementById("loadingSpinner");
+const fileNameDisplay = document.getElementById("fileNameDisplay");
 
 let selectedPages = [];
 let originalFile = null;
 
-// Drag & drop
+// Drag & drop správanie
 ["dragenter", "dragover"].forEach(event => {
     dropZone.addEventListener(event, e => {
         e.preventDefault();
@@ -43,6 +47,10 @@ async function handlePDF(file) {
     previewList.innerHTML = "";
     message.textContent = "";
     downloadArea.style.display = "none";
+    resetSelectionBtn.style.display = "inline-block";
+    removeFileBtn.style.display = "inline-block";
+    fileNameDisplay.textContent = `Nahratý súbor: ${file.name}`;
+    splitBtn.disabled = true;
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -75,10 +83,8 @@ async function handlePDF(file) {
                 wrapper.classList.add("selected");
             }
 
-            // Povoliť tlačidlo, ak je aspoň jedna strana vybraná
             splitBtn.disabled = selectedPages.length === 0;
         };
-
 
         wrapper.appendChild(canvas);
         wrapper.appendChild(label);
@@ -86,6 +92,34 @@ async function handlePDF(file) {
     }
 }
 
+// Zrušiť výber strán
+resetSelectionBtn.addEventListener("click", () => {
+    selectedPages = [];
+    document.querySelectorAll(".preview-item").forEach(item => {
+        item.classList.remove("selected");
+    });
+    splitBtn.disabled = true;
+    message.textContent = "";
+    message.className = "";
+});
+
+// Odstrániť celý nahratý PDF súbor
+removeFileBtn.addEventListener("click", () => {
+    fileInput.value = "";
+    originalFile = null;
+    selectedPages = [];
+    previewList.innerHTML = "";
+    fileNameDisplay.textContent = "";
+    message.textContent = "";
+    message.className = "";
+    spinner.style.display = "none";
+    downloadArea.style.display = "none";
+    resetSelectionBtn.style.display = "none";
+    removeFileBtn.style.display = "none";
+    splitBtn.disabled = true;
+});
+
+// Rozdelenie PDF
 splitBtn.addEventListener("click", async () => {
     message.textContent = "";
     message.className = "";
@@ -100,6 +134,8 @@ splitBtn.addEventListener("click", async () => {
     const formData = new FormData();
     formData.append("file", originalFile);
     formData.append("selectedPages", JSON.stringify(selectedPages));
+
+    spinner.style.display = "block";
 
     try {
         const response = await fetch(`${BACKEND_URL}/pdf/split`, {
@@ -130,5 +166,7 @@ splitBtn.addEventListener("click", async () => {
         console.error(err);
         message.textContent = "Chyba pri komunikácii so serverom.";
         message.classList.add("text-danger", "text-center");
+    } finally {
+        spinner.style.display = "none";
     }
 });
