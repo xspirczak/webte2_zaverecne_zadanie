@@ -153,23 +153,16 @@ submitBtn.addEventListener("click", async () => {
     formData.append("file", originalFile);
     formData.append("rotations", JSON.stringify(rotations));
 
-<<<<<<< Updated upstream
     try {
+        const accessToken = localStorage.getItem("access_token");
+
         const res = await fetch(`${BACKEND_URL}/pdf/rotate`, {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
         });
-=======
-    const accessToken = localStorage.getItem("access_token");
-    
-    const response = await fetch(`${BACKEND_URL}/pdf/rotate`, {
-        method: "POST",
-        body: formData,
-        headers: {
-            "Authorization": "Bearer " + accessToken
-        }
-    });
->>>>>>> Stashed changes
 
         if (res.ok) {
             const blob = await res.blob();
