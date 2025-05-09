@@ -212,29 +212,22 @@ async def add_watermark(
         raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
 
     try:
-        # Import potrebných knižníc
         from reportlab.pdfgen import canvas
         from reportlab.lib.colors import Color, HexColor
         from PIL import Image
 
-        # Načítanie PDF súboru
         pdf_content = await file.read()
         reader = PdfReader(io.BytesIO(pdf_content))
         writer = PdfWriter()
 
-        # Spracovanie opacity
         try:
             opacity_value = int(opacity) / 100
         except ValueError:
-            opacity_value = 0.3  # Default hodnota
+            opacity_value = 0.3  
 
-        # Príprava vodoznaku
         if watermarkType == "text" and watermarkText:
-            # Textový vodoznak
             
-            # Pre každú stranu PDF získame jej veľkosť
             for i, page in enumerate(reader.pages):
-                # Vytvorenie dočasného canvas pre vodoznak pre túto stranu
                 watermark_stream = io.BytesIO()
                 
                 page_box = page.mediabox
@@ -249,7 +242,7 @@ async def add_watermark(
                     c.setFillColor(Color(0.5, 0.5, 0.5, alpha=opacity_value))  
                 
                 base_font_size = min(page_width, page_height) / 20  
-                font_size = base_font_size  # Default
+                font_size = base_font_size  
                 
                 if fontSize == "small":
                     font_size = base_font_size * 0.75
@@ -299,7 +292,6 @@ async def add_watermark(
             temp_img_path = temp_img.name
             
             try:
-                # Pre každú stranu PDF
                 for i, page in enumerate(reader.pages):
                     page_box = page.mediabox
                     page_width = float(page_box.width)
@@ -314,10 +306,9 @@ async def add_watermark(
                     scaled_width = img_width * scale
                     scaled_height = img_height * scale
                     
-                    # Určenie pozície
                     margin = min(page_width, page_height) / 20 
                     
-                    x, y = (page_width - scaled_width)/2, (page_height - scaled_height)/2  # Default center
+                    x, y = (page_width - scaled_width)/2, (page_height - scaled_height)/2  
                     
                     if position == "topLeft":
                         x, y = margin, page_height - margin - scaled_height
@@ -364,7 +355,9 @@ async def add_watermark(
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+    
 
+# Endpoint na pridanie compress do PDF
 @router.post("/compress")
 async def compress_pdf(request: Request, file: UploadFile, compressionLevel: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
@@ -402,8 +395,7 @@ async def compress_pdf(request: Request, file: UploadFile, compressionLevel: str
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
-
-# Endpoint na extrakciu strán z PDF
+# Endpoint na pridanie extract do PDF
 @router.post("/extract")
 async def extract_pages(request: Request, file: UploadFile, pagesToExtract: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
     if user["role"] != "user" and user["role"] != "admin":
@@ -450,3 +442,89 @@ async def extract_pages(request: Request, file: UploadFile, pagesToExtract: str 
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+
+
+# Endpoint na pridanie reorder do PDF
+@router.post("/reorder")
+async def reorder_pages(request: Request, file: UploadFile, pageOrder: str = Form(...), user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
+    if user["role"] != "user" and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
+    try:
+        from pypdf import PdfWriter, PdfReader
+        
+        file_bytes = await file.read()
+        pdf_reader = PdfReader(io.BytesIO(file_bytes))
+        pdf_writer = PdfWriter()
+        
+        page_order = json.loads(pageOrder)
+        
+        if not page_order or len(page_order) != len(pdf_reader.pages):
+            raise HTTPException(status_code=400, detail="Invalid page order. Number of pages must match the original PDF.")
+        
+        for idx in page_order:
+            if idx < 0 or idx >= len(pdf_reader.pages):
+                raise HTTPException(status_code=400, detail=f"Invalid page index: {idx}")
+        
+        for idx in page_order:
+            pdf_writer.add_page(pdf_reader.pages[idx])
+        
+        output_stream = io.BytesIO()
+        pdf_writer.write(output_stream)
+        output_stream.seek(0)
+        
+        await log_history(
+            user_email=user["email"],
+            action="reorder",
+            access_type=access_type,
+            client_ip=request.client.host
+        )
+        
+        return StreamingResponse(
+            output_stream,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename=reordered_{file.filename}"}
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Endpoint na pridanie convert do PDF
+@router.post("/convert")
+async def convert_to_text(request: Request, file: UploadFile, user=Depends(get_current_user), access_type: Optional[str] = Query(default="api")):
+    if user["role"] != "user" and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Only logged in users can use this endpoint.")
+
+    try:
+        file_bytes = await file.read()
+        
+        from pypdf import PdfReader
+        
+        reader = PdfReader(io.BytesIO(file_bytes))
+        text_parts = []
+        
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                text_parts.append(text)
+        
+        full_text = "\n\n".join(text_parts)
+        
+        await log_history(
+            user_email=user["email"],
+            action="convert-to-text",
+            access_type=access_type,
+            client_ip=request.client.host
+        )
+        
+        return {"text": full_text}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+

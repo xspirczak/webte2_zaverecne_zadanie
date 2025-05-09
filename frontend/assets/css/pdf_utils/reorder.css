@@ -1,0 +1,88 @@
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    color: #666;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.drop-zone.dragover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+
+.preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.preview-item {
+    width: 150px;
+    text-align: center;
+    cursor: grab;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.preview-item:active {
+    cursor: grabbing;
+}
+
+.preview-item canvas {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-item span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.preview-item:hover {
+    transform: translateY(-5px);
+}
+
+.preview-item .arrows {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    gap: 10px;
+}
+
+.preview-item .arrows button {
+    border: none;
+    background: none;
+    color: #6c757d;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.preview-item .arrows button:hover {
+    color: #007bff;
+}
+
+.instruction-box {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+    border-left: 4px solid #17a2b8;
+    font-size: 0.9rem;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+.sortable-chosen {
+    transform: scale(1.05);
+}
