@@ -34,5 +34,5 @@ typing_extensions==4.13.2
 uvicorn==0.34.2
 passlib[bcrypt]==1.7.4
 pypdf>=5.4.0
-reportlab>=4.0.0
-pillow>=10.0.0
+reportlab==4.0.7
+pillow==10.2.0
