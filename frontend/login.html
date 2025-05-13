@@ -2,11 +2,10 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>Prihlásenie</title>
+    <title data-lang-key="login_title">Prihlásenie</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
 <body class="bg-light d-flex">
 
@@ -19,34 +18,34 @@
     <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
         <ul class="navbar-nav mx-auto">
             <li class="nav-item" id="dashboardLink" style="display: none;">
-                <a class="nav-link" href="dashboard.html">Úvod</a>
+                <a class="nav-link" href="dashboard.html" data-lang-key="nav_dashboard">Úvod</a>
             </li>
             <li class="nav-item" id="pdfEditorLink" style="display: none;">
-                <a class="nav-link" href="pdf.html">Editor</a>
+                <a class="nav-link" href="pdf.html" data-lang-key="nav_pdf_editor">Editor</a>
             </li>
             <li class="nav-item" id="manualLink" style="display: none;">
-                <a class="nav-link" href="manual.html">Používateľská príručka</a>
+                <a class="nav-link" href="manual.html" data-lang-key="nav_manual">Používateľská príručka</a>
             </li>
             <li class="nav-item" id="apiDocsLink" style="display: none;">
-                <a class="nav-link" href="http://localhost:8000/docs" target="_blank">API Dokumentácia</a>
+                <a class="nav-link" href="http://localhost:8000/docs" target="_blank" data-lang-key="nav_api_docs">API Dokumentácia</a>
             </li>
             <li class="nav-item" id="historyLink" style="display: none;">
-                <a class="nav-link" href="history.html">História</a>
+                <a class="nav-link" href="history.html" data-lang-key="nav_history">História</a>
             </li>
         </ul>
 
         <ul class="navbar-nav" id="auth-links">
             <li class="nav-item" id="loginLink">
-                <a class="nav-link" href="login.html">Prihlásenie</a>
+                <a class="nav-link" href="login.html" data-lang-key="nav_login">Prihlásenie</a>
             </li>
             <li class="nav-item" id="registerLink">
-                <a class="nav-link" href="register.html">Registrácia</a>
+                <a class="nav-link" href="register.html" data-lang-key="nav_register">Registrácia</a>
             </li>
             <li class="nav-item d-flex align-items-center ml-3" id="userInfo" style="display: none;">
                 <span class="nav-link mb-0" id="usernameDisplay" style="font-weight: bold;">
-                    Prihlásený: <span id="usernameText"></span>
+                    <span data-lang-key="nav_logged_in">Prihlásený:</span> <span id="usernameText"></span>
                 </span>
-                <a href="#" id="logoutBtn" class="nav-link" title="Odhlásiť sa">
+                <a href="#" id="logoutBtn" class="nav-link" data-lang-title="nav_logout" title="Odhlásiť sa">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </li>
@@ -58,19 +57,19 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow rounded p-4 bg-white">
-                <h2 class="mb-4 text-center">Prihlásenie</h2>
+                <h2 class="mb-4 text-center" data-lang-key="login_title">Prihlásenie</h2>
                 <div id="errorDiv" class="alert alert-danger d-none"></div>
                 <form id="loginForm" novalidate>
                     <div class="form-group">
-                        <label for="email">Emailová adresa</label>
-                        <input type="email" class="form-control" id="email" placeholder="Zadajte email" required>
+                        <label for="email" data-lang-key="login_email">Emailová adresa</label>
+                        <input type="email" class="form-control" id="email" data-lang-placeholder="login_email_placeholder" placeholder="Zadajte email" required>
                     </div>
                     <div class="form-group position-relative">
-                        <label for="password">Heslo</label>
-                        <input type="password" class="form-control" id="password" placeholder="Zadajte heslo" required>
+                        <label for="password" data-lang-key="login_password">Heslo</label>
+                        <input type="password" class="form-control" id="password" data-lang-placeholder="login_password_placeholder" placeholder="Zadajte heslo" required>
                         <i class="fas fa-eye password-toggle" onclick="togglePassword('password', this)"></i>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Prihlásiť sa</button>
+                    <button type="submit" class="btn btn-primary btn-block" data-lang-key="login_button">Prihlásiť sa</button>
                 </form>
                 <p class="mt-3 text-center" id="responseMsg"></p>
             </div>
@@ -80,12 +79,18 @@
 
 <footer class="text-white mt-auto py-4 custom-color">
     <div class="container text-center">
-        <p class="mb-2 font-weight-bold">Tím PDF Správca</p>
+        <p class="mb-2 font-weight-bold" data-lang-key="footer_team">Tím PDF Správca</p>
         <p class="mb-0">Martin Skasko, Michal Štrba, Miloslav Šmíd, Dávid Oliver Spirczak</p>
-        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 PDF Správca – WebTe 2 Záverečný projekt</p>
+        <p class="mt-2 mb-0" style="font-size: 0.9rem;">&copy; 2025 <span data-lang-key="footer_copyright">PDF Správca – WebTe 2 Záverečný projekt</span></p>
+    </div>
+    <div class="language-switcher ml-3">
+        <button class="btn btn-sm btn-dark" onclick="switchLanguage('sk')" data-lang="sk">SK</button>
+        <button class="btn btn-sm btn-dark" onclick="switchLanguage('en')" data-lang="en">EN</button>
     </div>
 </footer>
 
+<script src="assets/js/translations.js"></script>
+<script src="assets/js/language-switcher.js"></script>
 <script src="assets/js/env.js"></script>
 <script src="assets/js/login.js"></script>
 <script src="assets/js/auth.js"></script>
