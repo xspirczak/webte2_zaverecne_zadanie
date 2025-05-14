@@ -1,4 +1,5 @@
-from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime
+from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime, Text
+from datetime import datetime
 
 metadata = MetaData()
 
@@ -23,4 +24,11 @@ history_table = Table(
     Column("access_type", String(50)),  # frontend alebo API
     Column("city", String(255)),
     Column("country", String(255)),
+)
+
+manual_table = Table(
+    "manual",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("content", String, nullable=False)
 )

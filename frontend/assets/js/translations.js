@@ -232,7 +232,12 @@ const translations = {
         "manual_export_text": "Obsah tejto príručky je generovaný dynamicky. Pri kliknutí na tlačidlo nižšie sa odošle požiadavka na server, ktorý vygeneruje aktuálnu verziu tejto príručky vo formáte PDF.",
         "manual_export_button": "Exportovať do PDF",
         "manual_export_error": "Chyba pri exporte: {message}",
-        
+        "manual_edit_button": "Editovať",
+        "manual_back_button": "Späť",
+        "manual_editor_title": "Editor používateľskej príručky",
+        "manual_save_edit": "Uložiť zmeny",
+
+
         "btn_cancel": "Zrušiť",
         "btn_cancel_selection": "Zrušiť výber",
         "btn_remove": "Odstrániť",
@@ -495,7 +500,12 @@ const translations = {
       "manual_export_text": "The content of this manual is dynamically generated. When clicking the button below, a request is sent to the server, which generates the current version of this manual in PDF format.",
       "manual_export_button": "Export to PDF",
       "manual_export_error": "Export error: {message}",
-      
+        "manual_edit_button": "Edit",
+        "manual_back_button": "Back",
+        "manual_editor_title": "User Manual Editor",
+        "manual_save_edit": "Save Changes",
+
+
       "btn_cancel": "Cancel",
       "btn_cancel_selection": "Cancel Selection",
       "btn_remove": "Remove",

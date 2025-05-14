@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import database
-from routers import user_routes, history_routes, pdf_routes
+from routers import user_routes, history_routes, pdf_routes, manual_routes
 
 app = FastAPI(
     docs_url="/docs",
@@ -24,6 +24,8 @@ app.add_middleware(
 app.include_router(user_routes.router, prefix="/api/user")
 app.include_router(history_routes.router, prefix="/api/history")
 app.include_router(pdf_routes.router, prefix="/api/pdf")
+app.include_router(manual_routes.router, prefix="/api/manual")
+
 
 @app.on_event("startup")
 async def startup():
