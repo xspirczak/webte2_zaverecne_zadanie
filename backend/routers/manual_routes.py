@@ -17,6 +17,15 @@ async def get_manual():
     else:
         raise HTTPException(status_code=404, detail="Príručka neexistuje.")
 
+@router.get("/{id}")
+async def get_manual_by_id(id: int):
+    query = select(manual_table).where(manual_table.c.id == id)
+    manual = await database.fetch_one(query)
+    if manual:
+        return PlainTextResponse(manual["content"], media_type="text/html; charset=utf-8")
+    else:
+        raise HTTPException(status_code=404, detail="Príručka neexistuje.")
+
 @router.post("/")
 async def save_manual(request: Request):
     content_bytes = await request.body()

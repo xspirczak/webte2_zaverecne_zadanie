@@ -85,3 +85,57 @@ INSERT INTO manual (content) VALUES (
                                           <h3>5. Export príručky</h3>
                                           <p>Obsah tejto príručky je generovaný dynamicky z databázy. Po kliknutí na tlačidlo <strong>„Exportovať do PDF“</strong> sa aktuálny obsah odošle na server, kde sa pomocou PDF generátora prevedie na profesionálne formátovaný PDF dokument. Tento dokument je okamžite pripravený na stiahnutie alebo tlač.</p>'
                                     );
+INSERT INTO manual (content) VALUES (
+                                        '
+                                        <h3>1. Introduction</h3>
+                                        <p>This manual serves as a complete guide to using the PDF Manager application. It includes a description of all features available through the user interface (frontend) and the API interface (backend).</p>
+
+                                        <h3>2. Application Functionality</h3>
+                                        <ul>
+                                          <li>User login and registration</li>
+                                          <li>PDF file editor with 10 functions for working with PDFs:</li>
+                                          <ul>
+                                            <li><strong>Split PDF</strong> – divide a document into selected parts</li>
+                                            <li><strong>Merge PDF</strong> – combine multiple PDF files into one</li>
+                                            <li><strong>Rotate Pages</strong> – rotate individual PDF pages by 90°</li>
+                                            <li><strong>Compress PDF</strong> – reduce the size of a PDF file</li>
+                                            <li><strong>Extract Pages</strong> – save selected pages as a new PDF</li>
+                                            <li><strong>Delete Pages</strong> – remove selected pages from the document</li>
+                                            <li><strong>Reorder Pages</strong> – rearrange pages into a new order</li>
+                                            <li><strong>Add Watermark</strong> – visually mark the document</li>
+                                            <li><strong>Password Protection</strong> – secure PDF with a password</li>
+                                            <li><strong>Convert to Text</strong> – extract text from a PDF as a `.txt` file</li>
+                                          </ul>
+                                          <li>History of performed actions</li>
+                                          <li>User roles and permissions (standard / administrator)</li>
+                                          <li>Export user manual to PDF</li>
+                                        </ul>
+
+                                        <h3>3. Using the Frontend</h3>
+                                        <p>After logging in, the user is presented with a dashboard showing available functions based on their role. Each function has its own subpage with an intuitive interface. The user can:</p>
+                                        <ul>
+                                          <li>Select PDF files for processing using drag & drop</li>
+                                          <li>Execute a specific operation (e.g. split, rotate, merge)</li>
+                                          <li>Preview pages (for certain functions)</li>
+                                          <li>Download the output file</li>
+                                        </ul>
+
+                                        <h3>4. Using the API</h3>
+                                        <p>The application provides an interface for developers to integrate features into external systems. The API is documented using OpenAPI and available at <a href="http://localhost:8000/docs" target="_blank">/docs</a>.</p>
+                                        <pre><code>POST /api/user/login
+                                        GET  /api/pdf/list
+                                        POST /api/pdf/merge
+                                        POST /api/pdf/split
+                                        POST /api/pdf/rotate
+                                        POST /api/pdf/delete-pages
+                                        POST /api/pdf/extract-pages
+                                        POST /api/pdf/reorder
+                                        POST /api/pdf/watermark
+                                        POST /api/pdf/protect
+                                        POST /api/pdf/compress
+                                        POST /api/pdf/to-text</code></pre>
+
+                                        <h3>5. Exporting the Manual</h3>
+                                        <p>The content of this manual is dynamically generated from the database. After clicking the <strong>“Export to PDF”</strong> button, the current content is sent to the server, where it is converted into a professionally formatted PDF document using a PDF generator. This document is immediately ready for download or printing.</p>
+                                        '
+                                    );
