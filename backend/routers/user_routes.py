@@ -23,6 +23,22 @@ class UserLogin(BaseModel):
 # Regex na základnú validáciu emailu
 EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
+@router.get("/me")
+async def get_profile(user=Depends(get_current_user)):
+    query = users_table.select().where(users_table.c.email == user["email"])
+    db_user = await database.fetch_one(query)
+
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Používateľ neexistuje")
+
+    return {
+        "username": db_user["username"],
+        "email": db_user["email"],
+        "role": db_user["role"]
+    }
+
+
+
 @router.post("/register")
 async def register(user: UserRegister):
     # Overenie mena

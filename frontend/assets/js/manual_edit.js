@@ -1,4 +1,7 @@
-let quill;
+let quillSk;
+let quillEn;
+let htmlSk;
+let htmlEn;
 
 function showAlert(message, type = "info") {
     const alertDiv = document.getElementById("editAlert");
@@ -10,10 +13,11 @@ function showAlert(message, type = "info") {
     }, 4000);
 }
 document.addEventListener("DOMContentLoaded", async () => {
-    quill = new Quill("#manual-editor", {
+    quillSk = new Quill("#manual-editor-sk", {
         theme: "snow",
         modules: {
             toolbar: [
+                [{ container: "quill-toolbar-sk"}],
                 [{ 'header': [1, 2, false] }],
                 ['bold', 'italic', 'underline'],
                 [{ 'list': 'ordered' }, { 'list': 'bullet' }],
@@ -23,28 +27,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Načítaj aktuálny obsah z DB
-    const res = await fetch(`${BACKEND_URL}/manual`);
-    const html = await res.text();
-    console.log(html);
-    quill.clipboard.dangerouslyPasteHTML(html); // Použi túto metódu
+    const resSk = await fetch(`${BACKEND_URL}/manual`);
+    htmlSk = await resSk.text();
+    //console.log(htmlSk);
+    quillSk.clipboard.dangerouslyPasteHTML(htmlSk); // Použi túto metódu
+
+
+    quillEn = new Quill("#manual-editor-en", {
+        theme: "snow",
+        modules: {
+            toolbar: [
+                [{ container: "quill-toolbar-en"}],
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'clean']
+            ]
+        }
+    });
+
+
+
+    // Načítaj aktuálny obsah z DB
+    const resEn = await fetch(`${BACKEND_URL}/manual/2`);
+    htmlEn = await resEn.text();
+    //console.log(htmlSk);
+    quillEn.clipboard.dangerouslyPasteHTML(htmlEn); // Použi túto metódu
+
+    function stripHtml(html) {
+        const temp = document.createElement("div");
+        temp.innerHTML = html;
+        return temp.textContent || temp.innerText || "";
+    }
+
 
     // Uloženie
     document.getElementById("saveBtn").addEventListener("click", async () => {
-        const html = quill.root.innerHTML;
+        const originalTextSk = stripHtml(htmlSk).trim().replace(/\s+/g, " ");
+        const currentTextSk = quillSk.getText().trim().replace(/\s+/g, " ");
 
-        const response = await fetch(`${BACKEND_URL}/manual`, {
-            method: "POST",
+        const originalTextEn = stripHtml(htmlEn).trim().replace(/\s+/g, " ");
+        const currentTextEn = quillEn.getText().trim().replace(/\s+/g, " ");
+
+        const changedSk = originalTextSk !== currentTextSk;
+        const changedEn = originalTextEn !== currentTextEn;
+
+        const lang = localStorage.getItem("language") || "sk";
+        if ((changedSk && !changedEn) || (!changedSk && changedEn)) {
+            showAlert(lang === "sk" ? "Ak upravíte jednu verziu, musíte upraviť aj druhú." : "If you edit one version, you have to edit the other too.", "warning");
+            return;
+        }
+
+        const responseSk = await fetch(`${BACKEND_URL}/manual/1`, {
+            method: "PUT",
             headers: { "Content-Type": "text/plain" },
-            body: html
+            body: quillSk.root.innerHTML
         });
 
-        if (response.ok) {
-            showAlert("Príručka bola uložená.", "success");
+        const responseEn = await fetch(`${BACKEND_URL}/manual/2`, {
+            method: "PUT",
+            headers: { "Content-Type": "text/plain" },
+            body: quillEn.root.innerHTML
+        });
+
+        const results = await Promise.all([responseSk, responseEn]);
+
+        if (results.every(res => res.ok)) {
+
+            showAlert(lang === "sk" ? "Príručka bola uložená." : "Manual has been saved.", "success");
             setTimeout(() => {
                 window.location.href = "manual.html";
             }, 3000);
         } else {
-            showAlert("Chyba pri ukladaní príručky.", "success");
+            showAlert(lang === "sk" ? "Chyba pri ukladaní príručky." : "Error while saving the manual.", "warning");
         }
     });
 });

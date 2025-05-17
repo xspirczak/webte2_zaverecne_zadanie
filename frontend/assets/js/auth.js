@@ -74,6 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    if(currentPage === "manual_edit.html")  {
+        if (!token) {
+            window.location.href = "login.html";
+        }
+        else if (role !== "admin") {
+            window.location.href = "access_denied.html";
+        }
+    }
+
 
     //Expirácia a refresh access tokenu
     function parseJwt(token) {

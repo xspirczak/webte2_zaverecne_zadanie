@@ -1,14 +1,18 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const contentDiv = document.getElementById("manual-content");
 
+    // Zisti aktuálny jazyk – ak nie je nastavený, predvolený je "sk"
+    const lang = localStorage.getItem("language") || "sk";
+    const manualId = lang === "en" ? 2 : 1;
+
     try {
-        const res = await fetch(`${BACKEND_URL}/manual`);
+        const res = await fetch(`${BACKEND_URL}/manual/${manualId}`);
+        if (!res.ok) throw new Error("Nepodarilo sa načítať manuál");
         const html = await res.text();
         contentDiv.insertAdjacentHTML('beforeend', html);
-
-        //contentDiv.innerHTML = html;
     } catch (err) {
         contentDiv.innerHTML = "<p class='text-danger'>Nepodarilo sa načítať príručku.</p>";
+        console.error(err);
     }
 
     const role = localStorage.getItem("role");

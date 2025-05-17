@@ -26,7 +26,7 @@ async def get_manual_by_id(id: int):
     else:
         raise HTTPException(status_code=404, detail="Príručka neexistuje.")
 
-@router.post("/")
+""" @router.post("/")
 async def save_manual(request: Request):
     content_bytes = await request.body()
     try:
@@ -49,7 +49,36 @@ async def save_manual(request: Request):
         insert_query = insert(manual_table).values(content=encoded_content)
         await database.execute(insert_query)
 
-    return {"message": "Príručka bola uložená."}
+    return {"message": "Príručka bola uložená."} """
+
+
+#aktualizácia manuálu
+@router.put("/{id}")
+async def update_manual(id: int, request: Request):
+    content_bytes = await request.body()
+    try:
+        content_str = content_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        raise HTTPException(status_code=400, detail="Neplatné kódovanie vstupných dát. Očakáva sa UTF-8.")
+
+    encoded_content = content_str.encode("utf-8")
+
+    query = select(manual_table).where(manual_table.c.id == id)
+    manual = await database.fetch_one(query)
+
+    if not manual:
+        raise HTTPException(status_code=404, detail=f"Príručka s ID {id} neexistuje.")
+
+    update_query = (
+        update(manual_table)
+        .where(manual_table.c.id == id)
+        .values(content=encoded_content)
+    )
+    await database.execute(update_query)
+
+    return {"message": f"Príručka s ID {id} bola aktualizovaná."}
+
+
 
 @router.get("/pdf")
 async def export_manual_pdf():

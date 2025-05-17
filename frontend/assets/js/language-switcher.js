@@ -24,14 +24,14 @@ function switchLanguage(lang) {
     localStorage.setItem('language', lang);
     updatePageLanguage();
 
-    // 🔁 Ak sa nachádzam na stránke manual.html, načítaj príručku z backendu
     if (window.location.pathname.includes("manual.html")) {
         const manualId = lang === "en" ? 2 : 1;
         loadManualById(manualId);
     }
 
-    // 🔔 Notifikácia o zmene jazyka
-    const langNotification = document.createElement('div');
+
+    // možno odkomentovať, ak je potrebné zobraziť notifikáciu
+    /*const langNotification = document.createElement('div');
     langNotification.className = 'lang-notification';
     langNotification.textContent = getTranslation('language_changed');
     document.body.appendChild(langNotification);
@@ -44,7 +44,7 @@ function switchLanguage(lang) {
                 document.body.removeChild(langNotification);
             }, 300);
         }, 2000);
-    }, 100);
+    }, 100); */
 }
 
 function updatePageLanguage() {

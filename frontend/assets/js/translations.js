@@ -265,7 +265,12 @@ const translations = {
         
         "access_denied": "Prístup zamietnutý",
         "access_denied_message": "Táto stránka je dostupná iba pre administrátorov.",
-        "error_server_communication": "Chyba pri komunikácii so serverom."
+        "error_server_communication": "Chyba pri komunikácii so serverom.",
+
+        "user_profile": "Profil používateľa",
+        "user_name": "Meno",
+        "old_token": "Predchádzajúci token",
+        "new_token": "Nový token",
     },
     "en": {
         "nav_dashboard": "Dashboard",
@@ -533,6 +538,11 @@ const translations = {
       
       "access_denied": "Access Denied",
       "access_denied_message": "This page is only accessible to administrators.",
-      "error_server_communication": "Error communicating with the server."
-  }
+      "error_server_communication": "Error communicating with the server.",
+
+        "user_profile": "User Profile",
+        "user_name": "Name",
+        "old_token": "Previous token",
+        "new_token": "New token"
+    }
 };
