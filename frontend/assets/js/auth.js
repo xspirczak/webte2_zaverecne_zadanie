@@ -43,15 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.clear();
-            window.location.href = 'index.html';
+            if (window.location.pathname.includes("/pdf_utils/")) {
+                window.location.href = "../index.html";
+            } else {
+                window.location.href = "index.html";
+            }
         });
     }
 
-
+    // možno pridať aj do protectedPages aj stránky v adresári pdf_utils
     //Prístupy na podstránky podľa roly
     const token = localStorage.getItem("access_token");
     const currentPage = window.location.pathname.split("/").pop();
-
+    const currentPath = window.location.pathname; // pridáme túto premennú
     const protectedPages = ["dashboard.html", "pdf.html", "manual.html"];
     const authPages = ["login.html", "register.html"];
 
@@ -60,9 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = "login.html";
     }
 
+    if (!token && currentPath.includes("/pdf_utils/")) {
+        window.location.href = "../login.html";
+    }
+
     // Používateľ JE prihlásený – zablokuj prístup na login a register
     if (token && authPages.includes(currentPage)) {
-        window.location.href = "index.html";
+        window.location.href = "dashboard.html";
     }
 
     // Ak je bežný používateľ na history.html → prístup zamietnutý
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshModalBtn.addEventListener('click', () => {
             const token = localStorage.getItem("access_token");
 
-            fetch("http://localhost:8000/api/user/refresh-token", {
+            fetch("/api/user/refresh-token", {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token

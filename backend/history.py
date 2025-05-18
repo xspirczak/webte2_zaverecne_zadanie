@@ -5,12 +5,11 @@ import httpx
 
 async def log_history(user_email: str, action: str, access_type: str, client_ip: str):
     city = country = "Neznáme"
-
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(f"http://ip-api.com/json/{client_ip}")
             data = response.json()
-            print(data)
+            print(f"IP-API odpoveď: {data}")
             city = data.get("city", "Neznáme")
             country = data.get("country", "Neznáme")
     except:

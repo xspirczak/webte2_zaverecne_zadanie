@@ -50,7 +50,7 @@ async def merge_pdfs(request: Request, files: list[UploadFile] = File(...), user
             user_email=user["email"],
             action="merge",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
 
         return FileResponse(output_path, media_type="application/pdf", filename="merged.pdf")
@@ -82,7 +82,7 @@ async def rotate_pdf(request: Request, file: UploadFile, rotations: str = Form(.
         user_email=user["email"],
         action="rotate",
         access_type=access_type,
-        client_ip=request.client.host
+        client_ip=request.headers.get("x-forwarded-for", request.client.host)
     )
 
     return StreamingResponse(output, media_type="application/pdf", headers={
@@ -112,7 +112,7 @@ async def encrypt_pdf(request: Request, file: UploadFile, password: str = Form(.
         user_email=user["email"],
         action="encrypt",
         access_type=access_type,
-        client_ip=request.client.host
+        client_ip=request.headers.get("x-forwarded-for", request.client.host)
     )
 
     return StreamingResponse(
@@ -157,7 +157,7 @@ async def split_pdf(request: Request, file: UploadFile, selectedPages: str = For
         user_email=user["email"],
         action="split",
         access_type=access_type,
-        client_ip=request.client.host
+        client_ip=request.headers.get("x-forwarded-for", request.client.host)
     )
     return StreamingResponse(zip_buffer, media_type="application/zip", headers={
         "Content-Disposition": "attachment; filename=split.zip"
@@ -186,7 +186,7 @@ async def delete_pages(request: Request, file: UploadFile, pagesToDelete: str = 
         user_email=user["email"],
         action="delete-pages",
         access_type=access_type,
-        client_ip=request.client.host
+        client_ip=request.headers.get("x-forwarded-for", request.client.host)
     )
 
     return StreamingResponse(output, media_type="application/pdf", headers={
@@ -339,7 +339,7 @@ async def add_watermark(
             user_email=user["email"],
             action="add-watermark",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
 
         output = io.BytesIO()
@@ -382,7 +382,7 @@ async def compress_pdf(request: Request, file: UploadFile, compressionLevel: str
             user_email=user["email"],
             action="compress",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
         
         return StreamingResponse(
@@ -430,7 +430,7 @@ async def extract_pages(request: Request, file: UploadFile, pagesToExtract: str 
             user_email=user["email"],
             action="extract",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
         
         return StreamingResponse(
@@ -480,7 +480,7 @@ async def reorder_pages(request: Request, file: UploadFile, pageOrder: str = For
             user_email=user["email"],
             action="reorder",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
         
         return StreamingResponse(
@@ -519,7 +519,7 @@ async def convert_to_text(request: Request, file: UploadFile, user=Depends(get_c
             user_email=user["email"],
             action="convert-to-text",
             access_type=access_type,
-            client_ip=request.client.host
+            client_ip=request.headers.get("x-forwarded-for", request.client.host)
         )
         
         return {"text": full_text}

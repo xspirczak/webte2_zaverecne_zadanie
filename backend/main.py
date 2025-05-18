@@ -5,9 +5,9 @@ from database import database
 from routers import user_routes, history_routes, pdf_routes, manual_routes
 
 app = FastAPI(
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
     #root_path="/api"
 )
 

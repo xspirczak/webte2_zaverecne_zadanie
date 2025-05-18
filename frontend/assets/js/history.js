@@ -19,7 +19,7 @@ $(document).ready(function () {
 
     const table = $('#historyTable').DataTable({
         ajax: function (data, callback, settings) {
-            fetch(`${BACKEND_URL}/history`, {
+            fetch(`${BACKEND_URL}/history/`, {
                 headers: {
                     "Authorization": "Bearer " + accessToken
                 }
@@ -89,7 +89,7 @@ $(document).ready(function () {
     $('#confirmDeleteBtn').on('click', () => {
         $('#confirmDeleteModal').modal('hide');
 
-        fetch(`${BACKEND_URL}/history`, {
+        fetch(`${BACKEND_URL}/history/`, {
             method: 'DELETE',
             headers: {
                 "Authorization": "Bearer " + accessToken

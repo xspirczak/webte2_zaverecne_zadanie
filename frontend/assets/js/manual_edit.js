@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Načítaj aktuálny obsah z DB
-    const resSk = await fetch(`${BACKEND_URL}/manual`);
+    const resSk = await fetch(`${BACKEND_URL}/manual/1`);
     htmlSk = await resSk.text();
     //console.log(htmlSk);
     quillSk.clipboard.dangerouslyPasteHTML(htmlSk); // Použi túto metódu
