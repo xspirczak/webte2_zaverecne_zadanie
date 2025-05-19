@@ -23,8 +23,15 @@ class UserLogin(BaseModel):
 # Regex na základnú validáciu emailu
 EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
 
+from fastapi import Security
+from fastapi.security import HTTPAuthorizationCredentials
+from auth import security
+
 @router.get("/me")
-async def get_profile(user=Depends(get_current_user)):
+async def get_profile(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+    user=Depends(get_current_user)
+):
     query = users_table.select().where(users_table.c.email == user["email"])
     db_user = await database.fetch_one(query)
 
@@ -36,6 +43,7 @@ async def get_profile(user=Depends(get_current_user)):
         "email": db_user["email"],
         "role": db_user["role"]
     }
+
 
 
 

@@ -4,6 +4,8 @@ from models import manual_table
 from database import database
 from sqlalchemy import select, insert, update, text
 from weasyprint import HTML
+from fastapi import BackgroundTasks
+import asyncio
 import io
 
 router = APIRouter()
@@ -80,24 +82,20 @@ async def update_manual(id: int, request: Request):
 
 
 
-@router.get("/pdf")
-async def export_manual_pdf():
-    query = select(manual_table)
+@router.get("/pdf/{id}")
+async def export_manual_pdf(id: int):
+    query = select(manual_table).where(manual_table.c.id == id)
     manual = await database.fetch_one(query)
 
     if not manual:
         raise HTTPException(status_code=404, detail="Príručka neexistuje.")
 
     html_content = manual["content"]
+    html_obj = HTML(string=html_content, base_url="", encoding="utf-8")
 
-    # Vytvoríme objekt HTML s explicitným nastavením kódovania na UTF-8
-    html_obj = HTML(string=html_content, base_url="", encoding="utf-8") # Doplnili sme encoding="utf-8"
+    loop = asyncio.get_event_loop()
+    pdf_bytes = await loop.run_in_executor(None, lambda: html_obj.write_pdf())
 
-    # Generate PDF in memory
-    pdf_bytes = io.BytesIO()
-    html_obj.write_pdf(target=pdf_bytes)
-    pdf_bytes.seek(0)
-
-    return StreamingResponse(pdf_bytes, media_type="application/pdf", headers={
+    return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf", headers={
         "Content-Disposition": "attachment; filename=manual.pdf"
     })

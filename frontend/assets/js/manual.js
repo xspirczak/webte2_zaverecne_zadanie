@@ -25,8 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function exportManual() {
+    const lang = localStorage.getItem("language") || "sk";
+    const manualId = lang === "en" ? 2 : 1;
     try {
-        const response = await fetch(`${BACKEND_URL}/manual/pdf`);
+        const response = await fetch(`${BACKEND_URL}/manual/pdf/${manualId}`);
         if (!response.ok) throw new Error("Chyba pri generovaní PDF.");
 
         const blob = await response.blob();
