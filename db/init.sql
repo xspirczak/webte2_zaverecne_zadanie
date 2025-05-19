@@ -68,7 +68,7 @@ INSERT INTO manual (content) VALUES (
                                           </ul>
 
                                           <h3>4. Použitie cez API</h3>
-                                          <p>Aplikácia poskytuje rozhranie pre vývojárov na integráciu funkcií do externých systémov. API je dokumentované cez OpenAPI a dostupné na <a href="/api/docs" target="_blank">/docs</a>.</p>
+                                          <p>Aplikácia poskytuje rozhranie pre vývojárov na integráciu funkcií do externých systémov. API je dokumentované cez OpenAPI a dostupné na <a href="http://localhost:8000/docs" target="_blank">/docs</a>.</p>
                                           <pre><code>POST /api/user/login
                                       GET  /api/pdf/list
                                       POST /api/pdf/merge
@@ -121,7 +121,7 @@ INSERT INTO manual (content) VALUES (
                                         </ul>
 
                                         <h3>4. Using the API</h3>
-                                        <p>The application provides an interface for developers to integrate features into external systems. The API is documented using OpenAPI and available at <a href="/api/docs" target="_blank">/docs</a>.</p>
+                                        <p>The application provides an interface for developers to integrate features into external systems. The API is documented using OpenAPI and available at <a href="http://localhost:8000/docs" target="_blank">/docs</a>.</p>
                                         <pre><code>POST /api/user/login
                                         GET  /api/pdf/list
                                         POST /api/pdf/merge
