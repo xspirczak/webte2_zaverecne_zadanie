@@ -26,15 +26,16 @@ services:
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 60
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8001:8000"
     working_dir: /app
 
   nginx:
      image: nginx:latest
+     restart: always
      depends_on:
        - backend
      ports:
-       - "80:80"
+       - "8082:80"
      volumes:
        - ./frontend:/usr/share/nginx/html
        - ./nginx.conf:/etc/nginx/nginx.conf:ro

@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshModalBtn.addEventListener('click', () => {
             const token = localStorage.getItem("access_token");
 
-            fetch("http://localhost:8000/api/user/refresh-token", {
+            fetch("/api/user/refresh-token", {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token

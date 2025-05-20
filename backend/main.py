@@ -9,9 +9,9 @@ app = FastAPI(
     title="Tvoja API dokumentácia",
     version="1.0.0",
     description="Zadaj svoj JWT token ako Bearer token.",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
 )
 
 #CORS middleware,

@@ -80,8 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${BACKEND_URL}/user/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-                mode: 'cors'
+                body: JSON.stringify(data)
             });
 
             const result = await res.json();
